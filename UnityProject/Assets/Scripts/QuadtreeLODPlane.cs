@@ -13,7 +13,7 @@ public class QuadtreeLODPlane : MonoBehaviour {
 		float distanceToCamera = Vector3.Distance ( Camera.main.transform.position, transform.position );
 		//Debug.Log ("distanceToCamera: " + distanceToCamera);
 		Vector3 parenSize = GetComponent<Renderer>().bounds.size;
-		if( child_[0] == null && distanceToCamera < 0.5f * parenSize.x ){
+		if( child_[0] == null && distanceToCamera < 2.0f * parenSize.x ){
 			Debug.Log ("Distance to camera: " + distanceToCamera);
 			Debug.Log ("parenSize.x: " + parenSize.x);
 			Vector3[] childLocalPosition = new Vector3[]
