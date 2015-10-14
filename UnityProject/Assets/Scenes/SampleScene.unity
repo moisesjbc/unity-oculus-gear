@@ -96,6 +96,7 @@ GameObject:
   - 33: {fileID: 120596557}
   - 64: {fileID: 120596556}
   - 23: {fileID: 120596555}
+  - 114: {fileID: 120596559}
   m_Layer: 0
   m_Name: QuadtreeLODPlane
   m_TagString: Untagged
@@ -157,7 +158,18 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
+--- !u!114 &120596559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 120596554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebcc2a4a1542b4248b6148b1052b6405, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &121252442
 GameObject:
   m_ObjectHideFlags: 0
