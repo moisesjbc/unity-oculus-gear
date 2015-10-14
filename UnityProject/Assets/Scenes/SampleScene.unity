@@ -245,7 +245,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b455d3ac977792b49ace356767c6bb65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lodPlane: {fileID: 11459106, guid: ce511126b697a654ca12feed20f2b0c8, type: 2}
 --- !u!1001 &995358212
 Prefab:
   m_ObjectHideFlags: 0
