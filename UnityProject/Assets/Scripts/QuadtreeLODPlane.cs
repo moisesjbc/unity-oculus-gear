@@ -47,6 +47,9 @@ public class QuadtreeLODPlane : MonoBehaviour {
 				child_[i].transform.localPosition = childLocalPosition[i];
 			}
 
+			Debug.Log ("Child 0 local position: " + child_[0].transform.localPosition );
+			Debug.Log ("Child 0 world position: " + child_[0].transform.position );
+
 			Debug.Log ( GetComponent<Renderer>().bounds.size );
 			GetComponent<MeshRenderer>().enabled = false;
 		}
