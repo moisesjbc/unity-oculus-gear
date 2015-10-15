@@ -17,9 +17,9 @@ public class QuadtreeLODNode {
 	bool leafNode = true;
 
 	private int depth_ = 0;
-	const int MAX_DEPTH = 5;
+	const int MAX_DEPTH = 7;
 
-	const float THRESHOLD_FACTOR = 2.0f;
+	const float THRESHOLD_FACTOR = 2.5f;
 
 	WWW wwwService_ = null;
 	bool textureLoaded = false;
