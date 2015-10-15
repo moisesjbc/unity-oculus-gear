@@ -70,6 +70,11 @@ public class QuadtreeLODNode {
 	public void SetVisible( bool visible )
 	{
 		visible_ = visible;
+		if (visible_ == false && children_[0] != null) {
+			for( int i = 0; i < children_.Length; i++ ){
+				children_[i].SetVisible (false);
+			} 
+		}
 	}
 
 
