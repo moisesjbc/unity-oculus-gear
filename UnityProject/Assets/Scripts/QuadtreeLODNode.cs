@@ -184,6 +184,7 @@ public class QuadtreeLODNode {
 			textureLoaded = true;
 			material_.color = Color.white;
 			material_.mainTexture = wwwService_.texture;
+			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
 	}
 
