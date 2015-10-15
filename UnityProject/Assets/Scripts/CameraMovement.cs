@@ -2,8 +2,7 @@
 using System.Collections;
 
 public class CameraMovement : MonoBehaviour {
-
-	private bool goingForward = true;
+	bool mouseLeftButtonPressed = false;
 
 	// Use this for initialization
 	void Start () {
@@ -11,18 +10,23 @@ public class CameraMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		const float step = 0.015f;
-		
-		if( goingForward ){
-			transform.Translate (step * Vector3.forward);
-			if( transform.position.y < 5.0f ){
-				goingForward = false;
-			}
-		}else{
-			transform.Translate (-step * Vector3.forward);
-			if( transform.position.y > 10.0f ){
-				goingForward = true;
-			}
+		const float zoomStep = 2.0f;
+		const float translationStep = 0.1f;
+
+		// Allow user to zoom in and out with the mouse whell.
+		float mouseZoom = Input.GetAxis ("Mouse ScrollWheel");
+		transform.Translate ( mouseZoom * zoomStep * Vector3.forward);
+
+		if (Input.GetMouseButtonDown (0)) {
+			mouseLeftButtonPressed = true;
+		} else if( Input.GetMouseButtonUp(0)) {
+			mouseLeftButtonPressed = false;
+		}
+
+		// Allow user to move over the map by moving the mouse.
+		if (mouseLeftButtonPressed) {
+			transform.Translate (Input.GetAxis ("Mouse Y") * -translationStep * Vector3.up);
+			transform.Translate (Input.GetAxis ("Mouse X") * -translationStep * Vector3.right);
 		}
 	}
 }
