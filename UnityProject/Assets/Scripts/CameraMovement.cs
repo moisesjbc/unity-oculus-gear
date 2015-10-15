@@ -10,8 +10,8 @@ public class CameraMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		const float zoomStep = 2.0f;
-		const float translationStep = 0.1f;
+		const float zoomStep = 1.0f;
+		const float translationStep = 0.5f;
 
 		// Allow user to zoom in and out with the mouse whell.
 		float mouseZoom = Input.GetAxis ("Mouse ScrollWheel");
