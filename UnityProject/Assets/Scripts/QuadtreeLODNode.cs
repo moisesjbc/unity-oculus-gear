@@ -56,7 +56,6 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 topLeftCoordinates, Vector2 bottomRightCoordinates )
 	{
-		Debug.Log ("Child created");
 		// Copy given mesh.
 		mesh_ = new Mesh ();
 		mesh_.vertices = parent.mesh_.vertices;
@@ -182,7 +181,6 @@ public class QuadtreeLODNode {
 		}
 
 		if ( !textureLoaded && wwwService_.isDone) {
-			Debug.Log ("Image loaded from url");
 			textureLoaded = true;
 			material_.color = Color.white;
 			material_.mainTexture = wwwService_.texture;
