@@ -6,7 +6,7 @@ public class QuadtreeLODPlane : MonoBehaviour {
 
 	void Start () {
 		Debug.Log ("Quadtree LOD plane created");
-		rootNode = new QuadtreeLODNode ( this.GetComponent<MeshFilter>().mesh, transform, this.GetComponent<Material>() );
+		rootNode = new QuadtreeLODNode( this.GetComponent<MeshFilter>().mesh, transform, this.GetComponent<Material>() );
 		GetComponent<MeshRenderer> ().enabled = false;
 	}
 

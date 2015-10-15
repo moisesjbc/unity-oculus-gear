@@ -10,12 +10,17 @@ public class QuadtreeLODNode {
 	private Mesh mesh_;
 	private Material material_;
 	private bool visible_;
+	Vector2 topLeftCoordinates_;
+	Vector2 bottomRightCoordinates_;
 	
 	QuadtreeLODNode[] children_;
 	bool leafNode = true;
 
 	private int depth_ = 0;
 	const int MAX_DEPTH = 5;
+
+	WWW wwwService_ = null;
+	bool textureLoaded = false;
 
 	
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
@@ -35,16 +40,21 @@ public class QuadtreeLODNode {
 
 		// Copy given material.
 		material_ = new Material (Shader.Find ("Standard"));
-		material_.color = Color.red;
 
 		visible_ = true;
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
+
+		topLeftCoordinates_ = new Vector2 ( 416000,3067000 );
+		bottomRightCoordinates_ = new Vector2 ( 466000,3118000 );
+
+		LoadMap ();
 	}
 
 
-	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition )
+	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 topLeftCoordinates, Vector2 bottomRightCoordinates )
 	{
+		Debug.Log ("Child created");
 		// Copy given mesh.
 		mesh_ = new Mesh ();
 		mesh_.vertices = parent.mesh_.vertices;
@@ -68,7 +78,12 @@ public class QuadtreeLODNode {
 		depth_ = parent.depth_ + 1;
 
 		visible_ = true;
+
+		topLeftCoordinates_ = topLeftCoordinates;
+		bottomRightCoordinates_ = bottomRightCoordinates;
 		
+		LoadMap ();
+
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 	}
 
@@ -114,9 +129,33 @@ public class QuadtreeLODNode {
 					new Color32(0, 0, 255, 255),
 					new Color32(255, 0, 255, 255)
 				};
+
+				int x0 = (int)topLeftCoordinates_.x;
+				int y0 = (int)topLeftCoordinates_.y;
+				int x1 = (int)bottomRightCoordinates_.x;
+				int y1 = (int)bottomRightCoordinates_.y;
+
+				int cx = (x0 + x1)/2;
+				int cy = (y0 + y1)/2;
+
+				Vector2[] childrenTopLeftCoordinates = new Vector2[]
+				{
+					new Vector2( x0, cy ),
+					new Vector2( x0, y0 ),
+					new Vector2( cx, cy ),
+					new Vector2( cx, y0 )
+				};
+
+				Vector2[] childrenBottomLeftCoordinates = new Vector2[]
+				{
+					new Vector2( cx, y1 ),
+					new Vector2( cx, cy ),
+					new Vector2( x1, y1 ),
+					new Vector2( x1, cy )
+				};
 								
 				for( int i=0; i<4; i++ ){
-					children_[i] = new QuadtreeLODNode( this, childColors[i], childLocalPosition[i] ); 
+					children_[i] = new QuadtreeLODNode( this, childColors[i], childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
 				}
 			}
 			
@@ -139,6 +178,13 @@ public class QuadtreeLODNode {
 				children_ [i].Update ();
 			}
 		}
+
+		if ( !textureLoaded && wwwService_.isDone) {
+			Debug.Log ("Image loaded from url");
+			textureLoaded = true;
+			material_.color = Color.white;
+			material_.mainTexture = wwwService_.texture;
+		}
 	}
 
 
@@ -153,4 +199,17 @@ public class QuadtreeLODNode {
 			}
 		}
 	}
+
+
+	private void LoadMap() {
+		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=256&HEIGHT=256&REFERER=CAPAWARE";
+		string bboxUrlQuery = 
+			"&BBOX=" + topLeftCoordinates_.x + "," +
+			topLeftCoordinates_.y + "," +
+			bottomRightCoordinates_.x + "," +
+			bottomRightCoordinates_.y;
+		string url = fixedUrl + bboxUrlQuery;
+		wwwService_ = new WWW(url);
+	}
+
 }
