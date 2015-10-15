@@ -13,15 +13,19 @@ public class QuadtreeLODPlane : MonoBehaviour {
 		float distanceToCamera = Vector3.Distance ( Camera.main.transform.position, transform.position );
 		//Debug.Log ("distanceToCamera: " + distanceToCamera);
 		Vector3 parenSize = GetComponent<Renderer>().bounds.size;
+		
 		if( child_[0] == null && distanceToCamera < 2.0f * parenSize.x ){
-			Debug.Log ("Distance to camera: " + distanceToCamera);
-			Debug.Log ("parenSize.x: " + parenSize.x);
+			Vector3 S = new Vector3(
+				1.0f / transform.lossyScale.x,
+				1.0f / transform.lossyScale.y,
+				1.0f / transform.lossyScale.z
+			);
 			Vector3[] childLocalPosition = new Vector3[]
 			{
-				new Vector3( parenSize.x/4,0,-parenSize.z/4 ),
-				new Vector3( parenSize.x/4,0,parenSize.z/4 ),
-				new Vector3( -parenSize.x/4,0,-parenSize.z/4 ),
-				new Vector3( -parenSize.x/4,0,parenSize.z/4 )
+				Vector3.Scale ( new Vector3( parenSize.x/4,0,-parenSize.z/4 ), S ),
+				Vector3.Scale ( new Vector3( parenSize.x/4,0,parenSize.z/4 ), S ),
+				Vector3.Scale ( new Vector3( -parenSize.x/4,0,-parenSize.z/4), S ),
+				Vector3.Scale ( new Vector3( -parenSize.x/4,0,parenSize.z/4), S )
 			};
 
 			Color32[] childColors = new Color32[]
@@ -43,12 +47,10 @@ public class QuadtreeLODPlane : MonoBehaviour {
 				child_[i].GetComponent<Renderer> ().material.mainTexture = Texture2D.whiteTexture;
 				child_[i].GetComponent<Renderer> ().material.color = childColors[i];
 				child_[i].transform.parent = transform;
-				child_[i].transform.localScale = new Vector3( 0.5f, 1.0f, 0.5f );
+				child_[i].transform.localScale = new Vector3( 0.5f, 0.5f, 0.5f );
+
 				child_[i].transform.localPosition = childLocalPosition[i];
 			}
-
-			Debug.Log ("Child 0 local position: " + child_[0].transform.localPosition );
-			Debug.Log ("Child 0 world position: " + child_[0].transform.position );
 
 			Debug.Log ( GetComponent<Renderer>().bounds.size );
 			GetComponent<MeshRenderer>().enabled = false;
