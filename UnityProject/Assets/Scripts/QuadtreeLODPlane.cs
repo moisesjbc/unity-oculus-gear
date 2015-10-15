@@ -48,11 +48,9 @@ public class QuadtreeLODPlane : MonoBehaviour {
 				child_[i].GetComponent<Renderer> ().material.color = childColors[i];
 				child_[i].transform.parent = transform;
 				child_[i].transform.localScale = new Vector3( 0.5f, 0.5f, 0.5f );
-
 				child_[i].transform.localPosition = childLocalPosition[i];
 			}
 
-			Debug.Log ( GetComponent<Renderer>().bounds.size );
 			GetComponent<MeshRenderer>().enabled = false;
 		}
 	}
