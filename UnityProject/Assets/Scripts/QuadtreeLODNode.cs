@@ -13,6 +13,10 @@ public class QuadtreeLODNode {
 	
 	QuadtreeLODNode[] children_;
 	bool leafNode = true;
+
+	private int depth_ = 0;
+	const int MAX_DEPTH = 5;
+
 	
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
 	{		
@@ -61,6 +65,8 @@ public class QuadtreeLODNode {
 		material_ = new Material (Shader.Find ("Standard"));
 		material_.color = color;
 
+		depth_ = parent.depth_ + 1;
+
 		visible_ = true;
 		
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
@@ -84,7 +90,7 @@ public class QuadtreeLODNode {
 		Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
 
 		// Subdivide the plane if camera is closer than a threshold.
-		if( leafNode && distanceToCamera < 2.0f * meshSize.x ){
+		if( leafNode && depth_ < MAX_DEPTH && distanceToCamera < 2.0f * meshSize.x ){
 			leafNode = false;
 			Debug.Log ("Creating children");
 			// Create children if they don't exist.
