@@ -203,7 +203,7 @@ public class QuadtreeLODNode {
 
 
 	private void LoadMap() {
-		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=256&HEIGHT=256&REFERER=CAPAWARE";
+		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=128&HEIGHT=128&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
 			"&BBOX=" + topLeftCoordinates_.x + "," +
 			topLeftCoordinates_.y + "," +
