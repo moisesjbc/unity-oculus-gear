@@ -21,10 +21,8 @@ public class CameraMovement : MonoBehaviour {
 			mouseLeftButtonPressed = true;
 		} else if( Input.GetMouseButtonUp(0)) {
 			mouseLeftButtonPressed = false;
-		}
-
-		// Allow user to move over the map by moving the mouse.
-		if (mouseLeftButtonPressed) {
+		} else if (mouseLeftButtonPressed) {
+			// Allow user to move over the map by moving the mouse.
 			transform.Translate (Input.GetAxis ("Mouse Y") * -translationStep * Vector3.up);
 			transform.Translate (Input.GetAxis ("Mouse X") * -translationStep * Vector3.right);
 		}
