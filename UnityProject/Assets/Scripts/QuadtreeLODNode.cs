@@ -54,7 +54,7 @@ public class QuadtreeLODNode {
 	}
 
 
-	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 topLeftCoordinates, Vector2 bottomRightCoordinates )
+	public QuadtreeLODNode( QuadtreeLODNode parent, Vector3 localPosition, Vector2 topLeftCoordinates, Vector2 bottomRightCoordinates )
 	{
 		// Copy given mesh.
 		mesh_ = new Mesh ();
@@ -71,10 +71,8 @@ public class QuadtreeLODNode {
 
 		transform_.localScale = new Vector3( 0.5f, 0.5f, 0.5f );
 		transform_.localPosition = localPosition;
-
-		// Copy given material.
+		
 		material_ = new Material (Shader.Find ("Standard"));
-		material_.color = color;
 
 		depth_ = parent.depth_ + 1;
 
@@ -157,14 +155,6 @@ public class QuadtreeLODNode {
 			Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4), S )
 		};
 		
-		Color32[] childColors = new Color32[]
-		{
-			new Color32(255, 0, 0, 255),
-			new Color32(0, 255, 0, 255),
-			new Color32(0, 0, 255, 255),
-			new Color32(255, 0, 255, 255)
-		};
-		
 		int x0 = (int)topLeftCoordinates_.x;
 		int y0 = (int)topLeftCoordinates_.y;
 		int x1 = (int)bottomRightCoordinates_.x;
@@ -190,7 +180,7 @@ public class QuadtreeLODNode {
 		};
 		
 		for( int i=0; i<4; i++ ){
-			children_[i] = new QuadtreeLODNode( this, childColors[i], childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
+			children_[i] = new QuadtreeLODNode( this, childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
 		}
 	}
 
