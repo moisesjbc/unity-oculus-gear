@@ -219,4 +219,13 @@ public class QuadtreeLODNode {
 		wwwService_ = new WWW(url);
 	}
 
+
+	private bool AreChildrenLoaded(){
+		for (int i = 0; i < 4; i++) {
+			if( children_[i].textureLoaded == false ){
+				return false;
+			}
+		}
+		return true;
+	}
 }
