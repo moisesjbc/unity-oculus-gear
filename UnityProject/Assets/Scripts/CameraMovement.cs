@@ -5,7 +5,14 @@ using UnityEngine.VR;
 
 public class CameraMovement : MonoBehaviour {
 	bool mouseLeftButtonPressed = false;
-	float velocity = 1.0f;
+	const float INITIAL_VELOCITY = 1.0f;
+	float velocity = INITIAL_VELOCITY;
+	Vector3 initialPosition = Vector3.zero;
+
+
+	void Awake(){
+		initialPosition = transform.position;
+	}
 
 
 	void LateUpdate () {
@@ -29,6 +36,11 @@ public class CameraMovement : MonoBehaviour {
 					velocity += 1.0f;
 					mouseLeftButtonPressed = false;
 				}
+			}
+
+			if (Input.GetMouseButtonDown (1)) {
+				transform.position = initialPosition;
+				velocity = INITIAL_VELOCITY;
 			}
 		} else {
 			// Allow user to zoom in and out with the mouse whell.
