@@ -14,7 +14,6 @@ public class QuadtreeLODNode {
 	Vector2 bottomRightCoordinates_;
 	
 	QuadtreeLODNode[] children_;
-	bool leafNode = true;
 
 	private int depth_ = 0;
 	const int MAX_DEPTH = 7;
@@ -104,20 +103,20 @@ public class QuadtreeLODNode {
 		Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
 
 		// Subdivide the plane if camera is closer than a threshold.
-		if( leafNode && depth_ < MAX_DEPTH && distanceToCamera < THRESHOLD_FACTOR * meshSize.x ){
-			leafNode = false;
+		if( visible_ && distanceToCamera < THRESHOLD_FACTOR * meshSize.x ){
 			// Create children if they don't exist.
-			if( children_[0] == null ){
+			if( depth_ < MAX_DEPTH && children_[0] == null ){
 				CreateChildren ( meshSize );
 			}
 			
 			// Make this node invisible and children visible.
-			SetVisible (false);
-			for( int i = 0; i < children_.Length; i++ ){
-				children_[i].SetVisible (true);
+			if( AreChildrenLoaded() ){
+				SetVisible (false);
+				for( int i = 0; i < children_.Length; i++ ){
+					children_[i].SetVisible (true);
+				}
 			}
-		}else if( !leafNode && children_[0] != null && distanceToCamera >= THRESHOLD_FACTOR * meshSize.x ){
-			leafNode = true;
+		}else if( AreChildrenLoaded () && distanceToCamera >= THRESHOLD_FACTOR * meshSize.x ){
 			SetVisible (true);
 			for( int i = 0; i < children_.Length; i++ ){
 				children_[i].SetVisible (false);
@@ -125,7 +124,7 @@ public class QuadtreeLODNode {
 		}
 
 		// Update children.
-		if (!leafNode && children_ [0] != null) {
+		if (children_ [0] != null) {
 			for (int i=0; i<4; i++) {
 				children_ [i].Update ();
 			}
@@ -133,7 +132,6 @@ public class QuadtreeLODNode {
 
 		if ( !textureLoaded && wwwService_.isDone) {
 			textureLoaded = true;
-			material_.color = Color.white;
 			material_.mainTexture = wwwService_.texture;
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
@@ -190,7 +188,7 @@ public class QuadtreeLODNode {
 		if (visible_) {
 			Graphics.DrawMesh (mesh_, transform_.localToWorldMatrix, material_, 0);
 		}
-		if (children_ [0] != null) {
+		if (AreChildrenLoaded()) {
 			for (int i=0; i<4; i++) {
 				children_ [i].Render ();
 			}
@@ -211,11 +209,15 @@ public class QuadtreeLODNode {
 
 
 	private bool AreChildrenLoaded(){
-		for (int i = 0; i < 4; i++) {
-			if( children_[i].textureLoaded == false ){
-				return false;
+		if (children_ [0] != null) {
+			for (int i = 0; i < 4; i++) {
+				if (children_ [i].textureLoaded == false) {
+					return false;
+				}
 			}
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	}
 }
