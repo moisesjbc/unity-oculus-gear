@@ -110,54 +110,7 @@ public class QuadtreeLODNode {
 			leafNode = false;
 			// Create children if they don't exist.
 			if( children_[0] == null ){
-				Vector3 S = new Vector3(
-					1.0f / transform_.lossyScale.x,
-					1.0f / transform_.lossyScale.y,
-					1.0f / transform_.lossyScale.z
-					);
-				Vector3[] childLocalPosition = new Vector3[]
-				{
-					Vector3.Scale ( new Vector3( meshSize.x/4,0,-meshSize.z/4 ), S ),
-					Vector3.Scale ( new Vector3( meshSize.x/4,0,meshSize.z/4 ), S ),
-					Vector3.Scale ( new Vector3( -meshSize.x/4,0,-meshSize.z/4), S ),
-					Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4), S )
-				};
-				
-				Color32[] childColors = new Color32[]
-				{
-					new Color32(255, 0, 0, 255),
-					new Color32(0, 255, 0, 255),
-					new Color32(0, 0, 255, 255),
-					new Color32(255, 0, 255, 255)
-				};
-
-				int x0 = (int)topLeftCoordinates_.x;
-				int y0 = (int)topLeftCoordinates_.y;
-				int x1 = (int)bottomRightCoordinates_.x;
-				int y1 = (int)bottomRightCoordinates_.y;
-
-				int cx = (x0 + x1)/2;
-				int cy = (y0 + y1)/2;
-
-				Vector2[] childrenTopLeftCoordinates = new Vector2[]
-				{
-					new Vector2( x0, cy ),
-					new Vector2( x0, y0 ),
-					new Vector2( cx, cy ),
-					new Vector2( cx, y0 )
-				};
-
-				Vector2[] childrenBottomLeftCoordinates = new Vector2[]
-				{
-					new Vector2( cx, y1 ),
-					new Vector2( cx, cy ),
-					new Vector2( x1, y1 ),
-					new Vector2( x1, cy )
-				};
-								
-				for( int i=0; i<4; i++ ){
-					children_[i] = new QuadtreeLODNode( this, childColors[i], childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
-				}
+				CreateChildren ( meshSize );
 			}
 			
 			// Make this node invisible and children visible.
@@ -185,6 +138,59 @@ public class QuadtreeLODNode {
 			material_.color = Color.white;
 			material_.mainTexture = wwwService_.texture;
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
+		}
+	}
+
+
+	private void CreateChildren( Vector3 meshSize )
+	{
+		Vector3 S = new Vector3(
+			1.0f / transform_.lossyScale.x,
+			1.0f / transform_.lossyScale.y,
+			1.0f / transform_.lossyScale.z
+			);
+		Vector3[] childLocalPosition = new Vector3[]
+		{
+			Vector3.Scale ( new Vector3( meshSize.x/4,0,-meshSize.z/4 ), S ),
+			Vector3.Scale ( new Vector3( meshSize.x/4,0,meshSize.z/4 ), S ),
+			Vector3.Scale ( new Vector3( -meshSize.x/4,0,-meshSize.z/4), S ),
+			Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4), S )
+		};
+		
+		Color32[] childColors = new Color32[]
+		{
+			new Color32(255, 0, 0, 255),
+			new Color32(0, 255, 0, 255),
+			new Color32(0, 0, 255, 255),
+			new Color32(255, 0, 255, 255)
+		};
+		
+		int x0 = (int)topLeftCoordinates_.x;
+		int y0 = (int)topLeftCoordinates_.y;
+		int x1 = (int)bottomRightCoordinates_.x;
+		int y1 = (int)bottomRightCoordinates_.y;
+		
+		int cx = (x0 + x1)/2;
+		int cy = (y0 + y1)/2;
+		
+		Vector2[] childrenTopLeftCoordinates = new Vector2[]
+		{
+			new Vector2( x0, cy ),
+			new Vector2( x0, y0 ),
+			new Vector2( cx, cy ),
+			new Vector2( cx, y0 )
+		};
+		
+		Vector2[] childrenBottomLeftCoordinates = new Vector2[]
+		{
+			new Vector2( cx, y1 ),
+			new Vector2( cx, cy ),
+			new Vector2( x1, y1 ),
+			new Vector2( x1, cy )
+		};
+		
+		for( int i=0; i<4; i++ ){
+			children_[i] = new QuadtreeLODNode( this, childColors[i], childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
 		}
 	}
 
