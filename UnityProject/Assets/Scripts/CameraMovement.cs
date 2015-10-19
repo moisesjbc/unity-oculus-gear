@@ -16,12 +16,13 @@ public class CameraMovement : MonoBehaviour {
 
 
 	void LateUpdate () {
-		const float zoomStep = 1.0f;
-		const float translationStep = 0.5f;
+		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
+		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
+		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
 		
 		if (VRSettings.enabled) {
 			// Keep moving the player forward.
-			transform.position += GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (velocity * 0.001f * transform.position.y * Vector3.forward);
+			transform.position += GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (velocity * VR_VELOCITY_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
 
 			// Increase or decrease velocity with Oculus touchpad.
 			if (Input.GetMouseButtonDown (0)) {
@@ -45,7 +46,7 @@ public class CameraMovement : MonoBehaviour {
 		} else {
 			// Allow user to zoom in and out with the mouse whell.
 			float mouseZoom = Input.GetAxis ("Mouse ScrollWheel");
-			transform.Translate (mouseZoom * zoomStep * Vector3.forward);
+			transform.Translate (mouseZoom * NO_VR_ZOOM_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
 			
 			// Allow user to move over the map by moving the mouse.
 			if (Input.GetMouseButtonDown (0)) {
@@ -53,8 +54,8 @@ public class CameraMovement : MonoBehaviour {
 			} else if (Input.GetMouseButtonUp (0)) {
 				mouseLeftButtonPressed = false;
 			} else if (mouseLeftButtonPressed) {
-				transform.Translate (Input.GetAxis ("Mouse Y") * -translationStep * Vector3.up);
-				transform.Translate (Input.GetAxis ("Mouse X") * -translationStep * Vector3.right);
+				transform.Translate (-Input.GetAxis ("Mouse Y") * NO_VR_MOVEMENT_HEIGHT_FACTOR * transform.position.y * Vector3.up);
+				transform.Translate (-Input.GetAxis ("Mouse X") * NO_VR_MOVEMENT_HEIGHT_FACTOR * transform.position.y * Vector3.right);
 			}
 		}
 	}
