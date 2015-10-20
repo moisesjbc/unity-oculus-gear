@@ -10,8 +10,8 @@ public class QuadtreeLODNode {
 	private Mesh mesh_;
 	private Material material_;
 	private bool visible_;
-	Vector2 topLeftCoordinates_;
-	Vector2 bottomRightCoordinates_;
+	Vector2 bottomLeftCoordinates_;
+	Vector2 topRightCoordinates_;
 	
 	QuadtreeLODNode[] children_;
 
@@ -48,15 +48,15 @@ public class QuadtreeLODNode {
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 
-		topLeftCoordinates_ = new Vector2 ( 416000,3067000 );
-		bottomRightCoordinates_ = new Vector2 ( 466000,3118000 );
+		bottomLeftCoordinates_ = new Vector2 ( 416000,3067000 );
+		topRightCoordinates_ = new Vector2 ( 466000,3117000 );
 
 		LoadMap ();
 		heightMapRequest = RequestHeightMap ();
 	}
 
 
-	public QuadtreeLODNode( QuadtreeLODNode parent, Vector3 localPosition, Vector2 topLeftCoordinates, Vector2 bottomRightCoordinates )
+	public QuadtreeLODNode( QuadtreeLODNode parent, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
 		// Copy given mesh.
 		mesh_ = new Mesh ();
@@ -80,8 +80,8 @@ public class QuadtreeLODNode {
 
 		visible_ = true;
 
-		topLeftCoordinates_ = topLeftCoordinates;
-		bottomRightCoordinates_ = bottomRightCoordinates;
+		bottomLeftCoordinates_ = bottomLeftCoordinates;
+		topRightCoordinates_ = topRightCoordinates;
 		
 		LoadMap ();
 
@@ -158,13 +158,13 @@ public class QuadtreeLODNode {
 			Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4), S )
 		};
 		
-		int x0 = (int)topLeftCoordinates_.x;
-		int y0 = (int)topLeftCoordinates_.y;
-		int x1 = (int)bottomRightCoordinates_.x;
-		int y1 = (int)bottomRightCoordinates_.y;
+		float x0 = bottomLeftCoordinates_.x;
+		float y0 = bottomLeftCoordinates_.y;
+		float x1 = topRightCoordinates_.x;
+		float y1 = topRightCoordinates_.y;
 		
-		int cx = (x0 + x1)/2;
-		int cy = (y0 + y1)/2;
+		float cx = (x0 + x1)/2.0f;
+		float cy = (y0 + y1)/2.0f;
 		
 		Vector2[] childrenTopLeftCoordinates = new Vector2[]
 		{
@@ -204,10 +204,10 @@ public class QuadtreeLODNode {
 	private void LoadMap() {
 		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=128&HEIGHT=128&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
-			"&BBOX=" + topLeftCoordinates_.x + "," +
-			topLeftCoordinates_.y + "," +
-			bottomRightCoordinates_.x + "," +
-			bottomRightCoordinates_.y;
+			"&BBOX=" + bottomLeftCoordinates_.x + "," +
+				bottomLeftCoordinates_.y + "," +
+			topRightCoordinates_.x + "," +
+				topRightCoordinates_.y;
 		string url = fixedUrl + bboxUrlQuery;
 		wwwService_ = new WWW(url);
 	}
@@ -216,16 +216,16 @@ public class QuadtreeLODNode {
 	private WWW RequestHeightMap(){
 		// FIXME: Requesting a real RESY seems to not work when RESX != RESY.
 		Vector2 wcsResolution = new Vector2 (
-			(bottomRightCoordinates_.x - topLeftCoordinates_.x) / 10,
-			(bottomRightCoordinates_.x - topLeftCoordinates_.x) / 10
+			(bottomLeftCoordinates_.x - topRightCoordinates_.x) / 10,
+			(bottomLeftCoordinates_.x - topRightCoordinates_.x) / 10
 		);
 
 		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
-			"&BBOX=" + topLeftCoordinates_.x + "," +
-				topLeftCoordinates_.y + "," +
-				bottomRightCoordinates_.x + "," +
-				bottomRightCoordinates_.y;
+			"&BBOX=" + bottomLeftCoordinates_.x + "," +
+				bottomLeftCoordinates_.y + "," +
+				topRightCoordinates_.x + "," +
+				topRightCoordinates_.y;
 		string resolutionUrlQuery =
 			"&RESX=" + wcsResolution.x +
 			"&RESY=" + wcsResolution.y;
