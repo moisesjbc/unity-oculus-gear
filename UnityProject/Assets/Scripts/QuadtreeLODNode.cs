@@ -214,13 +214,22 @@ public class QuadtreeLODNode {
 
 
 	private WWW RequestHeightMap(){
-		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&RESX=5000&RESY=5000&REFERER=CAPAWARE";
+		Vector2 wcsResolution = new Vector2 (
+			(bottomRightCoordinates_.x - topLeftCoordinates_.x) / 10,
+			(bottomRightCoordinates_.y - topLeftCoordinates_.y) / 10
+		);
+
+		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
 			"&BBOX=" + topLeftCoordinates_.x + "," +
 				topLeftCoordinates_.y + "," +
 				bottomRightCoordinates_.x + "," +
 				bottomRightCoordinates_.y;
-		string url = fixedUrl + bboxUrlQuery;
+		string resolutionUrlQuery =
+			"&RESX=" + wcsResolution.x +
+			"&RESY=" + wcsResolution.y;
+
+		string url = fixedUrl + bboxUrlQuery + resolutionUrlQuery;
 
 		return new WWW( url );
 	}
