@@ -23,6 +23,8 @@ public class QuadtreeLODNode {
 	WWW wwwService_ = null;
 	bool textureLoaded = false;
 
+	WWW heightMapRequest = null;
+
 	
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
 	{		
@@ -50,6 +52,7 @@ public class QuadtreeLODNode {
 		bottomRightCoordinates_ = new Vector2 ( 466000,3118000 );
 
 		LoadMap ();
+		heightMapRequest = RequestHeightMap ();
 	}
 
 
@@ -83,6 +86,8 @@ public class QuadtreeLODNode {
 		LoadMap ();
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
+
+		heightMapRequest = RequestHeightMap ();
 	}
 
 
@@ -208,10 +213,23 @@ public class QuadtreeLODNode {
 	}
 
 
+	private WWW RequestHeightMap(){
+		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&RESX=5000&RESY=5000&REFERER=CAPAWARE";
+		string bboxUrlQuery = 
+			"&BBOX=" + topLeftCoordinates_.x + "," +
+				topLeftCoordinates_.y + "," +
+				bottomRightCoordinates_.x + "," +
+				bottomRightCoordinates_.y;
+		string url = fixedUrl + bboxUrlQuery;
+
+		return new WWW( url );
+	}
+
+
 	private bool AreChildrenLoaded(){
 		if (children_ [0] != null) {
 			for (int i = 0; i < 4; i++) {
-				if (children_ [i].textureLoaded == false) {
+				if (children_ [i].textureLoaded == false || !children_[i].heightMapRequest.isDone ) {
 					return false;
 				}
 			}
