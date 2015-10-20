@@ -20,5 +20,8 @@
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
+# APK files
+unity-oculus-gear.apk
+
 # Oculus signature files
 oculussig_*
