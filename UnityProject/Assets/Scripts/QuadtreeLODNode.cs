@@ -26,9 +26,24 @@ public class QuadtreeLODNode {
 	WWW heightMapRequest = null;
 	bool heightMapLoaded = false;
 
+	WWW childrenHeightMapRequest = null;
+	bool childrenHeightMapLoaded = false;
+
 
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
 	{		
+		/*
+		float[,] M = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+		float [,] M1 = GetSubHeightsMatrix (M, SubmatrixPosition.TOP_LEFT);
+		Debug.LogFormat ("TOP_LEFT:\n {0}, {1}\n{2}, {3}", M1 [0,0], M1 [0,1], M1 [1,0], M1 [1,1]);
+		float [,] M2 = GetSubHeightsMatrix (M, SubmatrixPosition.BOTTOM_LEFT);
+		Debug.LogFormat ("TOP_RIGHT:\n {0}, {1}\n{2}, {3}", M2 [0,0], M2 [0,1], M2 [1,0], M2 [1,1]);
+		float [,] M3 = GetSubHeightsMatrix (M, SubmatrixPosition.TOP_RIGHT);
+		Debug.LogFormat ("BOTTOM_LEFT:\n {0}, {1}\n{2}, {3}", M3 [0,0], M3 [0,1], M3 [1,0], M3 [1,1]);
+		float [,] M4 = GetSubHeightsMatrix (M, SubmatrixPosition.BOTTOM_RIGHT);
+		Debug.LogFormat ("BOTTOM_RIGHT:\n {0}, {1}\n{2}, {3}", M4 [0,0], M4 [0,1], M4 [1,0], M4 [1,1]);
+		*/
+
 		// Copy given mesh.
 		mesh_ = new Mesh ();
 		mesh_.vertices = mesh.vertices;
@@ -142,9 +157,21 @@ public class QuadtreeLODNode {
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
 
-		if (!heightMapLoaded && heightMapRequest.isDone) {
+		if (depth_ == 0 && !heightMapLoaded && heightMapRequest.isDone) {
 			heightMapLoaded = true;
 			SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+		}
+
+		if (!childrenHeightMapLoaded && childrenHeightMapRequest != null && childrenHeightMapRequest.isDone) {
+			childrenHeightMapLoaded = true;
+			float [,] M = GetHeightsMatrix( childrenHeightMapRequest.text );
+
+			Debug.Log ( "Setting children height maps" );
+
+			children_ [0].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_LEFT ) );
+			children_ [1].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_LEFT ) );
+			children_ [2].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
+			children_ [3].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
 		}
 	}
 
@@ -191,6 +218,10 @@ public class QuadtreeLODNode {
 		for( int i=0; i<4; i++ ){
 			children_[i] = new QuadtreeLODNode( this, childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
 		}
+
+		int CHILDREN_RESOLUTION = 11 * 2 - 1;
+		Debug.Log ("Requesting children height map - " + CHILDREN_RESOLUTION );
+		childrenHeightMapRequest = RequestHeightMap (bottomLeftCoordinates_, topRightCoordinates_, CHILDREN_RESOLUTION );
 	}
 
 
@@ -240,12 +271,14 @@ public class QuadtreeLODNode {
 
 		string url = fixedUrl + bboxUrlQuery + resolutionUrlQuery;
 
+		Debug.Log ("heightMap URL - " + url);
+
 		return new WWW( url );
 	}
 
 
 	private bool AreChildrenLoaded(){
-		if (children_ [0] != null) {
+		if (children_ [0] != null && childrenHeightMapLoaded) {
 			for (int i = 0; i < 4; i++) {
 				if (children_ [i].textureLoaded == false || !children_[i].heightMapRequest.isDone ) {
 					return false;
@@ -258,39 +291,93 @@ public class QuadtreeLODNode {
 	}
 
 
-	private float[][] GetHeightsMatrix( string heightMapSpec ){
-		// FIXME: Currently, this method ignores "ncols" and "nrows" from
-		// the received file and assumes a 11x11 matrix.
+	private float[,] GetHeightsMatrix( string heightMapSpec ){
 		string[] specLines = heightMapSpec.Split ('\n');
 		const int HEIGHTS_START_LINE = 6;
-		const int N_HEIGHTS_LINES = 11;
+		int N_COLUMNS = int.Parse ( specLines [0].Split (new string[]{" "}, System.StringSplitOptions.RemoveEmptyEntries) [1] );
+		int N_ROWS = int.Parse ( specLines [1].Split (new string[]{" "}, System.StringSplitOptions.RemoveEmptyEntries) [1] );
+
+		float[,] heightsMatrix = new float[N_ROWS,N_COLUMNS];
 		
-		float[][] heightsMatrix = new float[11][];
-		
-		for (int i=0; i<N_HEIGHTS_LINES; i++) {
+		for (int i=0; i<N_ROWS; i++) {
 			string[] heightsStrLine = specLines[HEIGHTS_START_LINE+i].Split (' ');
-			heightsMatrix[i] = new float[11];
 			
-			for(int j=0; j<11; j++){
-				heightsMatrix[i][j] = float.Parse ( heightsStrLine[j] );
+			for(int j=0; j<N_COLUMNS; j++){
+				heightsMatrix[i,j] = float.Parse ( heightsStrLine[j] );
 			}
 		}
 		
 		return heightsMatrix;
 	}
 
+	enum SubmatrixPosition {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
-	private void SetHeightsMap( float[][] heights )
+	private float[,] GetSubHeightsMatrix ( float[,] heightsMatrix, 
+	                                       SubmatrixPosition submatrixPosition )
+	{
+		int N = heightsMatrix.GetLength (0);
+
+		switch (submatrixPosition) {
+			case SubmatrixPosition.TOP_LEFT:
+				return GetSubMatrix( heightsMatrix, 0, 0, N/2+1, N/2+1 );
+			case SubmatrixPosition.TOP_RIGHT:
+				return GetSubMatrix( heightsMatrix, 0, N/2, N/2+1, N );
+			case SubmatrixPosition.BOTTOM_LEFT:
+				return GetSubMatrix( heightsMatrix, N/2, 0, N, N/2+1 );
+			case SubmatrixPosition.BOTTOM_RIGHT:
+				return GetSubMatrix( heightsMatrix, N/2, N/2, N, N );
+			default:
+				return GetSubMatrix( heightsMatrix, 0, 0, N, N );
+		}
+	}
+
+
+	private float[,] GetSubMatrix( float[,] M, 
+	                                int startRow, 
+	                                int startColumn,
+	                                int lastRow,
+	                                int lastColumn )
+	{
+		int N_ROWS = lastRow - startRow;
+		int N_COLUMNS = lastColumn - startColumn;
+
+		float[,] subMatrix = new float[N_ROWS,N_COLUMNS];
+
+		for (int i=0; i<N_ROWS; i++) {
+			for(int j=0; j<N_COLUMNS; j++){
+				subMatrix[i,j] = M[i+startRow,j+startColumn];
+			}
+		}
+		return subMatrix;
+	}
+
+
+	private void SetHeightsMap( float[,] heights )
 	{
 		Vector3[] vertices = mesh_.vertices;
-		
-		int N_ROWS = heights.Length;
-		for (int row=1; row<N_ROWS; row++) {
+
+		if (depth_ > 0) { Debug.Log ( "Starting child" ); }
+
+		int N_ROWS = heights.GetLength(0);
+		for (int row=0; row<N_ROWS; row++) {
 			// FIXME: This is forcing N_COLUMS = N_ROWS.
 			int N_COLUMNS = N_ROWS;
-			for (int column=1; column<N_COLUMNS; column++) {
+			for (int column=0; column<N_COLUMNS; column++) {
 				int VERTEX_INDEX = row * N_COLUMNS + column;
-				vertices[VERTEX_INDEX].y = heights[N_ROWS-1-row][column] / 1000; /// maxHeight;
+				vertices[VERTEX_INDEX].y = heights[row,N_COLUMNS-1-column] / 1000.0f; /// maxHeight;
+				if (depth_ > 0 && row == 0) {
+					Debug.Log ( "Vertex[" + 
+					           VERTEX_INDEX + 
+					           "]: " + 
+					           vertices[VERTEX_INDEX] +
+					           " -> height value[" +
+					           row +
+					           ", " +
+					           (N_COLUMNS-1-column) + 
+					           "](" +
+					           heights[row,N_COLUMNS-1-column] +
+					           ")");
+				}
 			}
 		}
 		
