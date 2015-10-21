@@ -24,6 +24,7 @@ public class QuadtreeLODNode {
 	bool textureLoaded = false;
 
 	WWW heightMapRequest = null;
+	bool heightMapLoaded = false;
 
 	
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
@@ -140,6 +141,11 @@ public class QuadtreeLODNode {
 			material_.mainTexture = wwwService_.texture;
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
+
+		if (!heightMapLoaded && heightMapRequest.isDone) {
+			heightMapLoaded = true;
+			SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+		}
 	}
 
 
@@ -216,16 +222,16 @@ public class QuadtreeLODNode {
 	private WWW RequestHeightMap(){
 		// FIXME: Requesting a real RESY seems to not work when RESX != RESY.
 		Vector2 wcsResolution = new Vector2 (
-			(bottomLeftCoordinates_.x - topRightCoordinates_.x) / 10,
-			(bottomLeftCoordinates_.x - topRightCoordinates_.x) / 10
+			(topRightCoordinates_.x - bottomLeftCoordinates_.x) / 11,
+			(topRightCoordinates_.x - bottomLeftCoordinates_.x) / 11
 		);
 
 		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
-			"&BBOX=" + bottomLeftCoordinates_.x + "," +
-				bottomLeftCoordinates_.y + "," +
-				topRightCoordinates_.x + "," +
-				topRightCoordinates_.y;
+			"&BBOX=" + (bottomLeftCoordinates_.x - wcsResolution.x) + "," +
+				(bottomLeftCoordinates_.y - wcsResolution.y) + "," +
+				(topRightCoordinates_.x + wcsResolution.x) + "," +
+				(topRightCoordinates_.y + wcsResolution.y);
 		string resolutionUrlQuery =
 			"&RESX=" + wcsResolution.x +
 			"&RESY=" + wcsResolution.y;
@@ -247,5 +253,47 @@ public class QuadtreeLODNode {
 		} else {
 			return false;
 		}
+	}
+
+
+	private float[][] GetHeightsMatrix( string heightMapSpec ){
+		// FIXME: Currently, this method ignores "ncols" and "nrows" from
+		// the received file and assumes a 13x13 matrix.
+		string[] specLines = heightMapSpec.Split ('\n');
+		const int HEIGHTS_START_LINE = 6;
+		const int N_HEIGHTS_LINES = 13;
+		
+		float[][] heightsMatrix = new float[13][];
+		
+		for (int i=0; i<N_HEIGHTS_LINES; i++) {
+			string[] heightsStrLine = specLines[HEIGHTS_START_LINE+i].Split (' ');
+			heightsMatrix[i] = new float[13];
+			
+			for(int j=0; j<13; j++){
+				heightsMatrix[i][j] = float.Parse ( heightsStrLine[j] );
+			}
+		}
+		
+		return heightsMatrix;
+	}
+
+
+	private void SetHeightsMap( float[][] heights )
+	{
+		Vector3[] vertices = mesh_.vertices;
+		
+		int N_ROWS = heights.Length - 1;
+		for (int row=1; row<N_ROWS; row++) {
+			// FIXME: This is forcing N_COLUMS = N_ROWS.
+			int N_COLUMNS = N_ROWS;
+			for (int column=1; column<N_COLUMNS; column++) {
+				int VERTEX_INDEX = (row-1)*(N_COLUMNS-1)+(column-1);
+				vertices[VERTEX_INDEX].y = heights[N_ROWS-row][column] / 1000; /// maxHeight;
+			}
+		}
+		
+		mesh_.vertices = vertices;
+		mesh_.RecalculateBounds ();
+		mesh_.RecalculateNormals ();
 	}
 }
