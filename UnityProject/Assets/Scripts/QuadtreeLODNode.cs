@@ -26,7 +26,7 @@ public class QuadtreeLODNode {
 	WWW heightMapRequest = null;
 	bool heightMapLoaded = false;
 
-	
+
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
 	{		
 		// Copy given mesh.
@@ -53,7 +53,7 @@ public class QuadtreeLODNode {
 		topRightCoordinates_ = new Vector2 ( 466000,3117000 );
 
 		LoadMap ();
-		heightMapRequest = RequestHeightMap ();
+		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, 11 );
 	}
 
 
@@ -88,7 +88,7 @@ public class QuadtreeLODNode {
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 
-		heightMapRequest = RequestHeightMap ();
+		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, 11 );
 	}
 
 
@@ -219,19 +219,21 @@ public class QuadtreeLODNode {
 	}
 
 
-	private WWW RequestHeightMap(){
-		// FIXME: Requesting a real RESY seems to not work when RESX != RESY.
+	private static WWW RequestHeightMap( 
+	                                    Vector2 bottomLeftCoordinates, 
+	                                    Vector2 topRightCoordinates,
+	                                    int N ){
 		Vector2 wcsResolution = new Vector2 (
-			(topRightCoordinates_.x - bottomLeftCoordinates_.x) / 11,
-			(topRightCoordinates_.x - bottomLeftCoordinates_.x) / 11
+			(topRightCoordinates.x - bottomLeftCoordinates.x) / N,
+			(topRightCoordinates.y - bottomLeftCoordinates.y) / N
 		);
 
 		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
-			"&BBOX=" + (bottomLeftCoordinates_.x - wcsResolution.x) + "," +
-				(bottomLeftCoordinates_.y - wcsResolution.y) + "," +
-				(topRightCoordinates_.x + wcsResolution.x) + "," +
-				(topRightCoordinates_.y + wcsResolution.y);
+			"&BBOX=" + bottomLeftCoordinates.x + "," +
+			bottomLeftCoordinates.y + "," +
+			topRightCoordinates.x + "," +
+			topRightCoordinates.y;
 		string resolutionUrlQuery =
 			"&RESX=" + wcsResolution.x +
 			"&RESY=" + wcsResolution.y;
@@ -258,18 +260,18 @@ public class QuadtreeLODNode {
 
 	private float[][] GetHeightsMatrix( string heightMapSpec ){
 		// FIXME: Currently, this method ignores "ncols" and "nrows" from
-		// the received file and assumes a 13x13 matrix.
+		// the received file and assumes a 11x11 matrix.
 		string[] specLines = heightMapSpec.Split ('\n');
 		const int HEIGHTS_START_LINE = 6;
-		const int N_HEIGHTS_LINES = 13;
+		const int N_HEIGHTS_LINES = 11;
 		
-		float[][] heightsMatrix = new float[13][];
+		float[][] heightsMatrix = new float[11][];
 		
 		for (int i=0; i<N_HEIGHTS_LINES; i++) {
 			string[] heightsStrLine = specLines[HEIGHTS_START_LINE+i].Split (' ');
-			heightsMatrix[i] = new float[13];
+			heightsMatrix[i] = new float[11];
 			
-			for(int j=0; j<13; j++){
+			for(int j=0; j<11; j++){
 				heightsMatrix[i][j] = float.Parse ( heightsStrLine[j] );
 			}
 		}
@@ -282,13 +284,13 @@ public class QuadtreeLODNode {
 	{
 		Vector3[] vertices = mesh_.vertices;
 		
-		int N_ROWS = heights.Length - 1;
+		int N_ROWS = heights.Length;
 		for (int row=1; row<N_ROWS; row++) {
 			// FIXME: This is forcing N_COLUMS = N_ROWS.
 			int N_COLUMNS = N_ROWS;
 			for (int column=1; column<N_COLUMNS; column++) {
-				int VERTEX_INDEX = (row-1)*(N_COLUMNS-1)+(column-1);
-				vertices[VERTEX_INDEX].y = heights[N_ROWS-row][column] / 1000; /// maxHeight;
+				int VERTEX_INDEX = row * N_COLUMNS + column;
+				vertices[VERTEX_INDEX].y = heights[N_ROWS-1-row][column] / 1000; /// maxHeight;
 			}
 		}
 		
