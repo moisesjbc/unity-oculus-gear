@@ -49,6 +49,7 @@ public class QuadtreeLODNode {
 		mesh_.vertices = mesh.vertices;
 		mesh_.triangles = mesh.triangles;
 		mesh_.uv = mesh.uv;
+		FlipUV ();
 		mesh_.RecalculateNormals ();
 		mesh_.RecalculateBounds ();
 
@@ -104,6 +105,17 @@ public class QuadtreeLODNode {
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, 11 );
+	}
+
+
+	private void FlipUV()
+	{
+		Vector2[] uv = mesh_.uv;
+		for (int i=0; i<uv.Length; i++) {
+			uv[i].x = 1.0f - uv[i].x;
+			uv[i].y = 1.0f - uv[i].y;
+		}
+		mesh_.uv = uv;
 	}
 
 
