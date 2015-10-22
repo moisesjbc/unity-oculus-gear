@@ -35,18 +35,6 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
 	{		
-		/*
-		float[,] M = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
-		float [,] M1 = GetSubHeightsMatrix (M, SubmatrixPosition.TOP_LEFT);
-		Debug.LogFormat ("TOP_LEFT:\n {0}, {1}\n{2}, {3}", M1 [0,0], M1 [0,1], M1 [1,0], M1 [1,1]);
-		float [,] M2 = GetSubHeightsMatrix (M, SubmatrixPosition.BOTTOM_LEFT);
-		Debug.LogFormat ("TOP_RIGHT:\n {0}, {1}\n{2}, {3}", M2 [0,0], M2 [0,1], M2 [1,0], M2 [1,1]);
-		float [,] M3 = GetSubHeightsMatrix (M, SubmatrixPosition.TOP_RIGHT);
-		Debug.LogFormat ("BOTTOM_LEFT:\n {0}, {1}\n{2}, {3}", M3 [0,0], M3 [0,1], M3 [1,0], M3 [1,1]);
-		float [,] M4 = GetSubHeightsMatrix (M, SubmatrixPosition.BOTTOM_RIGHT);
-		Debug.LogFormat ("BOTTOM_RIGHT:\n {0}, {1}\n{2}, {3}", M4 [0,0], M4 [0,1], M4 [1,0], M4 [1,1]);
-		*/
-
 		// Copy given mesh.
 		mesh_ = new Mesh ();
 		mesh_.vertices = mesh.vertices;
