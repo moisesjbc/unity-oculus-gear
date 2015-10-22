@@ -211,7 +211,7 @@ public class QuadtreeLODNode {
 		float cx = (x0 + x1)/2.0f;
 		float cy = (y0 + y1)/2.0f;
 		
-		Vector2[] childrenTopLeftCoordinates = new Vector2[]
+		Vector2[] childrenBottomLeftCoordinates = new Vector2[]
 		{
 			new Vector2( x0, cy ),
 			new Vector2( x0, y0 ),
@@ -219,7 +219,7 @@ public class QuadtreeLODNode {
 			new Vector2( cx, y0 )
 		};
 		
-		Vector2[] childrenBottomLeftCoordinates = new Vector2[]
+		Vector2[] childrenTopLeftCoordinates = new Vector2[]
 		{
 			new Vector2( cx, y1 ),
 			new Vector2( cx, cy ),
@@ -228,7 +228,7 @@ public class QuadtreeLODNode {
 		};
 		
 		for( int i=0; i<4; i++ ){
-			children_[i] = new QuadtreeLODNode( this, childLocalPosition[i], childrenTopLeftCoordinates[i], childrenBottomLeftCoordinates[i] ); 
+			children_[i] = new QuadtreeLODNode( this, childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
 		}
 
 		int CHILDREN_RESOLUTION = 11 * 2 - 1;
