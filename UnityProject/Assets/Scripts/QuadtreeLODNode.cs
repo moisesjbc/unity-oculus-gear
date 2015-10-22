@@ -103,8 +103,6 @@ public class QuadtreeLODNode {
 		LoadMap ();
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
-
-		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, 11 );
 	}
 
 
@@ -292,7 +290,7 @@ public class QuadtreeLODNode {
 	private bool AreChildrenLoaded(){
 		if (children_ [0] != null && childrenHeightMapLoaded) {
 			for (int i = 0; i < 4; i++) {
-				if (children_ [i].textureLoaded == false || !children_[i].heightMapRequest.isDone ) {
+				if (children_ [i].textureLoaded == false) {
 					return false;
 				}
 			}
