@@ -1,3 +1,5 @@
+#define PAINT_QUADS
+
 using UnityEngine;
 using System.Collections;
 
@@ -73,7 +75,7 @@ public class QuadtreeLODNode {
 	}
 
 
-	public QuadtreeLODNode( QuadtreeLODNode parent, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
+	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
 		// Copy given mesh.
 		mesh_ = new Mesh ();
@@ -92,7 +94,9 @@ public class QuadtreeLODNode {
 		transform_.localPosition = localPosition;
 		
 		material_ = new Material (Shader.Find ("Standard"));
-
+#if PAINT_QUADS
+		material_.color = color;
+#endif
 		depth_ = parent.depth_ + 1;
 
 		visible_ = true;
@@ -279,9 +283,17 @@ public class QuadtreeLODNode {
 			new Vector2( x1, y1 ),
 			new Vector2( x1, cy )
 		};
+
+		Color[] childrenColors = new Color[]
+		{
+			new Color( 1.0f, 0.0f, 0.0f, 1.0f ),
+			new Color( 0.0f, 1.0f, 0.0f, 1.0f ),
+			new Color( 0.0f, 0.0f, 1.0f, 1.0f ),
+			new Color( 1.0f, 1.0f, 0.0f, 1.0f )
+		};
 		
 		for( int i=0; i<4; i++ ){
-			children_[i] = new QuadtreeLODNode( this, childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
+			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
 		}
 
 		int CHILDREN_RESOLUTION = 11 * 2 - 1;
