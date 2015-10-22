@@ -182,7 +182,38 @@ public class QuadtreeLODNode {
 			children_ [1].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_LEFT ) );
 			children_ [2].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
 			children_ [3].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
+
+			CheckChildrenHeightMaps();
 		}
+	}
+
+
+	private void PrintHeightsRow( QuadtreeLODNode node, int row )
+	{
+		int FIRST_ROW_VERTEX_INDEX = row * 11;
+		Debug.LogFormat ("Heights row[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
+		                 row,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+0].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+1].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+2].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+3].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+4].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+5].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+6].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+7].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+8].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+9].y,
+		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+10].y);
+	}
+
+
+	private void CheckChildrenHeightMaps()
+	{
+		PrintHeightsRow ( children_[0], 10 );
+		PrintHeightsRow ( children_[1], 0 );
+
+		PrintHeightsRow ( children_[2], 10 );
+		PrintHeightsRow ( children_[3], 0 );
 	}
 
 
