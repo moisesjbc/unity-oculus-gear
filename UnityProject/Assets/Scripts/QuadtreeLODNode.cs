@@ -1,4 +1,5 @@
 #define PAINT_QUADS
+//#define PRINT_CHILDREN_BOUNDARIES
 
 using UnityEngine;
 using System.Collections;
@@ -187,7 +188,9 @@ public class QuadtreeLODNode {
 			children_ [2].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
 			children_ [3].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
 
-			CheckChildrenHeightMaps();
+			#if PRINT_CHILDREN_BOUNDARIES
+				CheckChildrenHeightMaps();
+			#endif
 		}
 	}
 
