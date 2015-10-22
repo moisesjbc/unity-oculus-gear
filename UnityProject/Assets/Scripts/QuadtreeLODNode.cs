@@ -207,6 +207,24 @@ public class QuadtreeLODNode {
 	}
 
 
+	private void PrintHeightsColumn( QuadtreeLODNode node, int column )
+	{
+		Debug.LogFormat ("Heights column[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
+		                 column,
+		                 node.mesh_.vertices [column].y,
+		                 node.mesh_.vertices [column+11].y,
+		                 node.mesh_.vertices [column+22].y,
+		                 node.mesh_.vertices [column+33].y,
+		                 node.mesh_.vertices [column+44].y,
+		                 node.mesh_.vertices [column+55].y,
+		                 node.mesh_.vertices [column+66].y,
+		                 node.mesh_.vertices [column+77].y,
+		                 node.mesh_.vertices [column+88].y,
+		                 node.mesh_.vertices [column+99].y,
+		                 node.mesh_.vertices [column+110].y);
+	}
+
+
 	private void CheckChildrenHeightMaps()
 	{
 		PrintHeightsRow ( children_[0], 10 );
@@ -214,6 +232,12 @@ public class QuadtreeLODNode {
 
 		PrintHeightsRow ( children_[2], 10 );
 		PrintHeightsRow ( children_[3], 0 );
+	
+		PrintHeightsColumn (children_ [0], 0);
+		PrintHeightsColumn (children_ [2], 10);
+
+		PrintHeightsColumn (children_ [1], 0);
+		PrintHeightsColumn (children_ [3], 10);
 	}
 
 
