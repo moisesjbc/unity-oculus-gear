@@ -88,7 +88,7 @@ public class QuadtreeLODNode {
 		transform_ = dumbGameObject_.transform;
 		transform_.parent = parent.transform_;
 
-		transform_.localScale = new Vector3( 0.5f, 0.5f, 0.5f );
+		transform_.localScale = new Vector3( 0.5f, 1.0f, 0.5f );
 		transform_.localPosition = localPosition;
 		
 		material_ = new Material (Shader.Find ("Standard"));
