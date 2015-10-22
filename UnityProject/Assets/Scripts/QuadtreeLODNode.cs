@@ -197,10 +197,10 @@ public class QuadtreeLODNode {
 			);
 		Vector3[] childLocalPosition = new Vector3[]
 		{
-			Vector3.Scale ( new Vector3( meshSize.x/4,0,-meshSize.z/4 ), S ),
-			Vector3.Scale ( new Vector3( meshSize.x/4,0,meshSize.z/4 ), S ),
-			Vector3.Scale ( new Vector3( -meshSize.x/4,0,-meshSize.z/4), S ),
-			Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4), S )
+			Vector3.Scale ( new Vector3( -meshSize.x/4,0,meshSize.z/4 ), S ),
+			Vector3.Scale ( new Vector3( -meshSize.x/4,0,-meshSize.z/4 ), S ),
+			Vector3.Scale ( new Vector3( meshSize.x/4,0,meshSize.z/4), S ),
+			Vector3.Scale ( new Vector3( meshSize.x/4,0,-meshSize.z/4), S )
 		};
 		
 		float x0 = bottomLeftCoordinates_.x;
