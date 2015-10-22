@@ -285,7 +285,6 @@ public class QuadtreeLODNode {
 		}
 
 		int CHILDREN_RESOLUTION = 11 * 2 - 1;
-		Debug.Log ("Requesting children height map - " + CHILDREN_RESOLUTION );
 		childrenHeightMapRequest = RequestHeightMap (bottomLeftCoordinates_, topRightCoordinates_, CHILDREN_RESOLUTION );
 	}
 
@@ -420,9 +419,7 @@ public class QuadtreeLODNode {
 	private void SetHeightsMap( float[,] heights )
 	{
 		Vector3[] vertices = mesh_.vertices;
-
-		if (depth_ > 0) { Debug.Log ( "Starting child" ); }
-
+		
 		int N_ROWS = heights.GetLength(0);
 		for (int row=0; row<N_ROWS; row++) {
 			// FIXME: This is forcing N_COLUMS = N_ROWS.
@@ -430,19 +427,6 @@ public class QuadtreeLODNode {
 			for (int column=0; column<N_COLUMNS; column++) {
 				int VERTEX_INDEX = row * N_COLUMNS + column;
 				vertices[VERTEX_INDEX].y = heights[row,N_COLUMNS-1-column] / 1000.0f; /// maxHeight;
-				if (depth_ > 0 && row == 0) {
-					Debug.Log ( "Vertex[" + 
-					           VERTEX_INDEX + 
-					           "]: " + 
-					           vertices[VERTEX_INDEX] +
-					           " -> height value[" +
-					           row +
-					           ", " +
-					           (N_COLUMNS-1-column) + 
-					           "](" +
-					           heights[row,N_COLUMNS-1-column] +
-					           ")");
-				}
 			}
 		}
 		
