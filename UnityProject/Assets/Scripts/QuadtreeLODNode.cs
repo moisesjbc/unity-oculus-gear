@@ -1,4 +1,4 @@
-#define PAINT_QUADS
+//#define PAINT_QUADS
 //#define PRINT_CHILDREN_BOUNDARIES
 
 using UnityEngine;
