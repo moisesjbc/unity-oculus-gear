@@ -10,7 +10,7 @@ public class QuadtreeLODNode {
 	// this isn't necessary.
 	private GameObject dumbGameObject_;
 	private Transform transform_;
-	private Mesh mesh_;
+	private Mesh innerMesh_;
 	private int meshVertexResolution_;
 	private Material material_;
 	private bool visible_;
@@ -49,7 +49,7 @@ public class QuadtreeLODNode {
 		*/
 
 		// Create the root mesh.
-		mesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
+		innerMesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
 		meshVertexResolution_ = meshVertexResolution;
 
 		// Make this mesh transform relative to parent.
@@ -75,12 +75,12 @@ public class QuadtreeLODNode {
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
 		// Copy given mesh.
-		mesh_ = new Mesh ();
-		mesh_.vertices = parent.mesh_.vertices;
-		mesh_.triangles = parent.mesh_.triangles;
-		mesh_.uv = parent.mesh_.uv;
-		mesh_.RecalculateNormals ();
-		mesh_.RecalculateBounds ();
+		innerMesh_ = new Mesh ();
+		innerMesh_.vertices = parent.innerMesh_.vertices;
+		innerMesh_.triangles = parent.innerMesh_.triangles;
+		innerMesh_.uv = parent.innerMesh_.uv;
+		innerMesh_.RecalculateNormals ();
+		innerMesh_.RecalculateBounds ();
 		meshVertexResolution_ = parent.meshVertexResolution_;
 
 		// Make this mesh transform relative to parent.
@@ -110,12 +110,12 @@ public class QuadtreeLODNode {
 
 	private void FlipUV()
 	{
-		Vector2[] uv = mesh_.uv;
+		Vector2[] uv = innerMesh_.uv;
 		for (int i=0; i<uv.Length; i++) {
 			uv[i].x = 1.0f - uv[i].x;
 			uv[i].y = 1.0f - uv[i].y;
 		}
-		mesh_.uv = uv;
+		innerMesh_.uv = uv;
 	}
 
 
@@ -133,7 +133,7 @@ public class QuadtreeLODNode {
 	public void Update()
 	{
 		float distanceToCamera = Vector3.Distance ( Camera.main.transform.position, transform_.position );
-		Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
+		Vector3 meshSize = Vector3.Scale (innerMesh_.bounds.size, transform_.lossyScale);
 
 		// Subdivide the plane if camera is closer than a threshold.
 		if( visible_ && distanceToCamera < THRESHOLD_FACTOR * meshSize.x ){
@@ -197,17 +197,17 @@ public class QuadtreeLODNode {
 		int FIRST_ROW_VERTEX_INDEX = row * 11;
 		Debug.LogFormat ("Heights row[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
 		                 row,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+0].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+1].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+2].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+3].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+4].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+5].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+6].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+7].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+8].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+9].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+10].y);
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+0].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+1].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+2].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+3].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+4].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+5].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+6].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+7].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+8].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+9].y,
+		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+10].y);
 	}
 
 
@@ -215,17 +215,17 @@ public class QuadtreeLODNode {
 	{
 		Debug.LogFormat ("Heights column[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
 		                 column,
-		                 node.mesh_.vertices [column].y,
-		                 node.mesh_.vertices [column+11].y,
-		                 node.mesh_.vertices [column+22].y,
-		                 node.mesh_.vertices [column+33].y,
-		                 node.mesh_.vertices [column+44].y,
-		                 node.mesh_.vertices [column+55].y,
-		                 node.mesh_.vertices [column+66].y,
-		                 node.mesh_.vertices [column+77].y,
-		                 node.mesh_.vertices [column+88].y,
-		                 node.mesh_.vertices [column+99].y,
-		                 node.mesh_.vertices [column+110].y);
+		                 node.innerMesh_.vertices [column].y,
+		                 node.innerMesh_.vertices [column+11].y,
+		                 node.innerMesh_.vertices [column+22].y,
+		                 node.innerMesh_.vertices [column+33].y,
+		                 node.innerMesh_.vertices [column+44].y,
+		                 node.innerMesh_.vertices [column+55].y,
+		                 node.innerMesh_.vertices [column+66].y,
+		                 node.innerMesh_.vertices [column+77].y,
+		                 node.innerMesh_.vertices [column+88].y,
+		                 node.innerMesh_.vertices [column+99].y,
+		                 node.innerMesh_.vertices [column+110].y);
 	}
 
 
@@ -305,7 +305,7 @@ public class QuadtreeLODNode {
 	public void Render()
 	{
 		if (visible_) {
-			Graphics.DrawMesh (mesh_, transform_.localToWorldMatrix, material_, 0);
+			Graphics.DrawMesh (innerMesh_, transform_.localToWorldMatrix, material_, 0);
 		}
 		if (AreChildrenLoaded()) {
 			for (int i=0; i<4; i++) {
@@ -426,7 +426,7 @@ public class QuadtreeLODNode {
 
 	private void SetHeightsMap( float[,] heights )
 	{
-		Vector3[] vertices = mesh_.vertices;
+		Vector3[] vertices = innerMesh_.vertices;
 		
 		int N_ROWS = heights.GetLength(0);
 		for (int row=0; row<N_ROWS; row++) {
@@ -438,8 +438,8 @@ public class QuadtreeLODNode {
 			}
 		}
 		
-		mesh_.vertices = vertices;
-		mesh_.RecalculateBounds ();
-		mesh_.RecalculateNormals ();
+		innerMesh_.vertices = vertices;
+		innerMesh_.RecalculateBounds ();
+		innerMesh_.RecalculateNormals ();
 	}
 }
