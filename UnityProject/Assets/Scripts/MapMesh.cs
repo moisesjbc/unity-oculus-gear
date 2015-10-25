@@ -53,6 +53,8 @@ public class MapMesh {
 		innerMesh.uv = uv;
 		innerMesh.RecalculateNormals ();
 		innerMesh.RecalculateBounds ();
+		
+		BorderMesh borderMesh = new BorderMesh (meshSize, meshVertexResolution, BorderMesh.BorderPosition.RIGHT);
 	}
 
 

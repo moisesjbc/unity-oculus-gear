@@ -223,7 +223,6 @@ public class QuadtreeLODNode {
 		}
 
 		int CHILDREN_RESOLUTION = meshVertexResolution_ * 2 - 1;
-		Debug.Log (CHILDREN_RESOLUTION);
 		childrenHeightMapRequest = RequestHeightMap (bottomLeftCoordinates_, topRightCoordinates_, CHILDREN_RESOLUTION );
 	}
 
