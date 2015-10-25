@@ -54,7 +54,7 @@ public class MapMesh {
 		innerMesh.RecalculateNormals ();
 		innerMesh.RecalculateBounds ();
 		
-		BorderMesh borderMesh = new BorderMesh (meshSize, meshVertexResolution, BorderMesh.BorderPosition.RIGHT);
+		BorderMesh borderMesh = new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.RIGHT);
 	}
 
 
