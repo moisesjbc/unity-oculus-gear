@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class BorderMesh {
+
+	Mesh mesh_;
 	
 	public enum BorderPosition
 	{
@@ -55,8 +57,18 @@ public class BorderMesh {
 			outerUV[i] = firstOuterUV + deltaOuterUV * i;
 			Debug.Log ("outerUV[" + i + "]: " + outerUV[i]);
 		}
+			
+		mesh_ = new Mesh();
 
-		int[] triangles = GenerateTriangles (nInnerVertices, nOuterVertices);
+		System.Array.Copy (innerVertices, mesh_.vertices, innerVertices.Length);
+		System.Array.Copy (outerVertices, 0, mesh_.vertices, innerVertices.Length, outerVertices.Length);
+
+		System.Array.Copy (innerUV, mesh_.uv, innerUV.Length);
+		System.Array.Copy (outerUV, 0, mesh_.uv, innerUV.Length, outerUV.Length);
+
+		mesh_.triangles = GenerateTriangles (nInnerVertices, nOuterVertices);
+		mesh_.RecalculateBounds();
+		mesh_.RecalculateNormals();
 	}
 
 
