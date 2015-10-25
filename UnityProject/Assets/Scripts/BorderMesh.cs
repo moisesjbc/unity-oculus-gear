@@ -23,7 +23,7 @@ public class BorderMesh {
 		Vector2[] innerUV = new Vector2[nInnerVertices];
 
 		float distanceBetweenOuterVertices = meshSize / (float)(nOuterVertices - 1);
-		float distanceBetweenOuterUV = 1.0f / (float)(nOuterVertices);
+		float distanceBetweenOuterUV = 1.0f / (float)(nOuterVertices - 1);
 		Vector3[] outerVertices = new Vector3[nOuterVertices];
 		Vector2[] outerUV = new Vector2[nOuterVertices];
 
@@ -39,13 +39,21 @@ public class BorderMesh {
 		Vector2 firstOuterUV = Vector3.zero;
 		Vector2 deltaOuterUV = Vector3.zero;
 
-		GenerateFirstAndDeltaVertices (meshSize / 2.0f, distanceBetweenInnerVertices, borderPosition, out firstInnerVertex, out deltaInnerVertex);
-		GenerateFirstAndDeltaUV (meshSize / 2.0f, distanceBetweenInnerUV, borderPosition, out firstInnerUV, out deltaInnerUV);
+		GenerateFirstAndDeltaVertices (meshSize / 2.0f, distanceBetweenInnerVertices, borderPosition, true, out firstInnerVertex, out deltaInnerVertex);
+		GenerateFirstAndDeltaUV (meshSize / 2.0f, distanceBetweenInnerUV, borderPosition, true, out firstInnerUV, out deltaInnerUV);
+		GenerateFirstAndDeltaVertices (meshSize / 2.0f, distanceBetweenOuterVertices, borderPosition, false, out firstOuterVertex, out deltaOuterVertex);
+		GenerateFirstAndDeltaUV (meshSize / 2.0f, distanceBetweenOuterUV, borderPosition, false, out firstOuterUV, out deltaOuterUV);
 
 		for( int i=0; i<innerVertices.Length; i++ ){
 			innerVertices[i] = firstInnerVertex + deltaInnerVertex * i;
 			innerUV[i] = firstInnerUV + deltaInnerUV * i;
 			Debug.Log ("innerUV[" + i + "]: " + innerUV[i]);
+		}
+
+		for( int i=0; i<outerVertices.Length; i++ ){
+			outerVertices[i] = firstOuterVertex + deltaOuterVertex * i;
+			outerUV[i] = firstOuterUV + deltaOuterUV * i;
+			Debug.Log ("outerUV[" + i + "]: " + outerUV[i]);
 		}
 	}
 
@@ -54,15 +62,18 @@ public class BorderMesh {
 	                                 float meshHalfSize, 
 	                                 float distanceBetweenVertices,
 	                                 BorderPosition borderPosition,
+	                                 bool innerBorder,
 	                                 out Vector3 firstVertex,
 	                                 out Vector3 deltaVertex )
 	{
+		float innerBorderFactor = (innerBorder) ? 1.0f : 0.0f;
+
 		switch (borderPosition) {
 			case BorderPosition.TOP:
 				firstVertex = new Vector3 (
-						-meshHalfSize + distanceBetweenVertices,
+						-meshHalfSize + innerBorderFactor * distanceBetweenVertices,
 						0.0f,
-						meshHalfSize - distanceBetweenVertices
+						meshHalfSize - innerBorderFactor * distanceBetweenVertices
 				);
 				deltaVertex = new Vector3 (
 						distanceBetweenVertices,
@@ -72,9 +83,9 @@ public class BorderMesh {
 				break;
 			case BorderPosition.BOTTOM:
 				firstVertex = new Vector3 (
-						-meshHalfSize + distanceBetweenVertices,
+						-meshHalfSize + innerBorderFactor * distanceBetweenVertices,
 						0.0f,
-						-meshHalfSize + distanceBetweenVertices
+						-meshHalfSize + innerBorderFactor * distanceBetweenVertices
 				);
 				deltaVertex = new Vector3 (
 						distanceBetweenVertices,
@@ -84,26 +95,26 @@ public class BorderMesh {
 				break;
 			case BorderPosition.LEFT:
 				firstVertex = new Vector3 (
-						-meshHalfSize + distanceBetweenVertices,
+						-meshHalfSize + innerBorderFactor * distanceBetweenVertices,
 						0.0f,
-						meshHalfSize - distanceBetweenVertices
+						meshHalfSize - innerBorderFactor * distanceBetweenVertices
 				);
 				deltaVertex = new Vector3 (
 						0.0f,
 						0.0f,
-						-distanceBetweenVertices
+						distanceBetweenVertices
 				);
 				break;
 			case BorderPosition.RIGHT:
 				firstVertex = new Vector3 (
-						meshHalfSize + distanceBetweenVertices,
+						meshHalfSize + innerBorderFactor * distanceBetweenVertices,
 						0.0f,
-						meshHalfSize - distanceBetweenVertices
+						meshHalfSize - innerBorderFactor * distanceBetweenVertices
 				);
 				deltaVertex = new Vector3 (
 						0.0f,
 						0.0f,
-						-distanceBetweenVertices
+						distanceBetweenVertices
 				);
 				break;
 			default:
@@ -119,14 +130,17 @@ public class BorderMesh {
 	                                    float meshHalfSize, 
 	                                    float distanceBetweenUV,
 	                                    BorderPosition borderPosition,
+	                                    bool innerBorder,
 	                                    out Vector2 firstUV,
 	                                    out Vector2 deltaUV )
 	{
+		float innerBorderFactor = (innerBorder) ? 1.0f : 0.0f;
+
 		switch (borderPosition) {
 			case BorderPosition.TOP:
 				firstUV = new Vector2(
-					distanceBetweenUV,
-					1.0f - distanceBetweenUV
+					innerBorderFactor * distanceBetweenUV,
+					1.0f - innerBorderFactor * distanceBetweenUV
 					);
 				deltaUV = new Vector2(
 					distanceBetweenUV,
@@ -135,8 +149,8 @@ public class BorderMesh {
 			break;
 			case BorderPosition.BOTTOM:
 				firstUV = new Vector2(
-					distanceBetweenUV,
-					distanceBetweenUV
+					innerBorderFactor * distanceBetweenUV,
+					innerBorderFactor * distanceBetweenUV
 					);
 				deltaUV = new Vector2(
 					distanceBetweenUV,
@@ -145,18 +159,18 @@ public class BorderMesh {
 			break;
 			case BorderPosition.LEFT:
 				firstUV = new Vector2(
-					distanceBetweenUV,
-					distanceBetweenUV
+					innerBorderFactor * distanceBetweenUV,
+					1.0f - innerBorderFactor * distanceBetweenUV
 					);
 				deltaUV = new Vector2(
 					0.0f,
-					-distanceBetweenUV
+					- distanceBetweenUV
 					);
 			break;
 			case BorderPosition.RIGHT:
 				firstUV = new Vector2(
-					1.0f - distanceBetweenUV,
-					1.0f - distanceBetweenUV
+					1.0f - innerBorderFactor * distanceBetweenUV,
+					1.0f - innerBorderFactor * distanceBetweenUV
 					);
 				deltaUV = new Vector2(
 					0.0f,
