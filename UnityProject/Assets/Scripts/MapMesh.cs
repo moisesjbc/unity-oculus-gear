@@ -4,6 +4,7 @@ using System.Collections;
 public class MapMesh {
 
 	private Mesh innerMesh;
+	private BorderMesh[] borderMeshes_;
 
 
 	public MapMesh( float meshSize, int meshVertexResolution )
@@ -53,8 +54,13 @@ public class MapMesh {
 		innerMesh.uv = uv;
 		innerMesh.RecalculateNormals ();
 		innerMesh.RecalculateBounds ();
-		
-		BorderMesh borderMesh = new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.RIGHT);
+
+		borderMeshes_ = new BorderMesh[4]{
+			new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.TOP),
+			new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.BOTTOM),
+			new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.LEFT),
+			new BorderMesh (meshSize, meshVertexResolution, 0, BorderMesh.BorderPosition.RIGHT)
+		};
 	}
 
 
@@ -66,6 +72,8 @@ public class MapMesh {
 		innerMesh.uv = srcMesh.innerMesh.uv;
 		innerMesh.RecalculateNormals ();
 		innerMesh.RecalculateBounds ();
+
+		borderMeshes_ = srcMesh.borderMeshes_;
 	}
 
 
