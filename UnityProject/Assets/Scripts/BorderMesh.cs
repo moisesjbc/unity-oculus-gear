@@ -55,6 +55,8 @@ public class BorderMesh {
 			outerUV[i] = firstOuterUV + deltaOuterUV * i;
 			Debug.Log ("outerUV[" + i + "]: " + outerUV[i]);
 		}
+
+		int[] triangles = GenerateTriangles (nInnerVertices, nOuterVertices);
 	}
 
 
@@ -183,5 +185,29 @@ public class BorderMesh {
 				Debug.LogError ("Bad BorderPosition specified in constructor");
 			break;
 		}
+	}
+
+
+	public int[] GenerateTriangles( int nInnerVertices, int nOuterVertices )
+	{
+		int nVertices = nInnerVertices + nOuterVertices;
+		int nTriangles = 2 * (nVertices - 1) * (nVertices - 1);
+		int[] triangles = new int[nTriangles * 3];
+		int trianglesPerInnerVertex = nOuterVertices / nInnerVertices;
+
+		int triangleIndex = 0;
+		for (int innerVertexIndex = 0; innerVertexIndex < nInnerVertices; innerVertexIndex++) {
+			int outerVertexIndex = innerVertexIndex + nInnerVertices;
+			for(int i = 0; i < trianglesPerInnerVertex; i++ ){
+				triangles[triangleIndex] = innerVertexIndex;
+				triangles[triangleIndex+1] = outerVertexIndex;
+				triangles[triangleIndex+2] = outerVertexIndex + 1;
+
+				outerVertexIndex++;
+				triangleIndex += 3;
+			}
+		}
+
+		return triangles;
 	}
 }
