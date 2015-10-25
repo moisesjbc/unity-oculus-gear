@@ -1,5 +1,4 @@
 //#define PAINT_QUADS
-//#define PRINT_CHILDREN_BOUNDARIES
 
 using UnityEngine;
 using System.Collections;
@@ -10,7 +9,7 @@ public class QuadtreeLODNode {
 	// this isn't necessary.
 	private GameObject dumbGameObject_;
 	private Transform transform_;
-	private Mesh innerMesh_;
+	private MapMesh mesh_;
 	private int meshVertexResolution_;
 	private Material material_;
 	private bool visible_;
@@ -49,7 +48,7 @@ public class QuadtreeLODNode {
 		*/
 
 		// Create the root mesh.
-		innerMesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
+		mesh_ = new MapMesh ( 10.0f, meshVertexResolution );
 		meshVertexResolution_ = meshVertexResolution;
 
 		// Make this mesh transform relative to parent.
@@ -75,12 +74,7 @@ public class QuadtreeLODNode {
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
 		// Copy given mesh.
-		innerMesh_ = new Mesh ();
-		innerMesh_.vertices = parent.innerMesh_.vertices;
-		innerMesh_.triangles = parent.innerMesh_.triangles;
-		innerMesh_.uv = parent.innerMesh_.uv;
-		innerMesh_.RecalculateNormals ();
-		innerMesh_.RecalculateBounds ();
+		mesh_ = new MapMesh ( parent.mesh_ );
 		meshVertexResolution_ = parent.meshVertexResolution_;
 
 		// Make this mesh transform relative to parent.
@@ -108,17 +102,6 @@ public class QuadtreeLODNode {
 	}
 
 
-	private void FlipUV()
-	{
-		Vector2[] uv = innerMesh_.uv;
-		for (int i=0; i<uv.Length; i++) {
-			uv[i].x = 1.0f - uv[i].x;
-			uv[i].y = 1.0f - uv[i].y;
-		}
-		innerMesh_.uv = uv;
-	}
-
-
 	public void SetVisible( bool visible )
 	{
 		visible_ = visible;
@@ -133,7 +116,7 @@ public class QuadtreeLODNode {
 	public void Update()
 	{
 		float distanceToCamera = Vector3.Distance ( Camera.main.transform.position, transform_.position );
-		Vector3 meshSize = Vector3.Scale (innerMesh_.bounds.size, transform_.lossyScale);
+		Vector3 meshSize = Vector3.Scale (mesh_.GetSize (), transform_.lossyScale);
 
 		// Subdivide the plane if camera is closer than a threshold.
 		if( visible_ && distanceToCamera < THRESHOLD_FACTOR * meshSize.x ){
@@ -171,7 +154,7 @@ public class QuadtreeLODNode {
 
 		if (depth_ == 0 && !heightMapLoaded && heightMapRequest.isDone) {
 			heightMapLoaded = true;
-			SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+			mesh_.SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
 		}
 
 		if (!childrenHeightMapLoaded && childrenHeightMapRequest != null && childrenHeightMapRequest.isDone) {
@@ -180,68 +163,11 @@ public class QuadtreeLODNode {
 
 			Debug.Log ( "Setting children height maps" );
 
-			children_ [0].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_LEFT ) );
-			children_ [1].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_LEFT ) );
-			children_ [2].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
-			children_ [3].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
-
-			#if PRINT_CHILDREN_BOUNDARIES
-				CheckChildrenHeightMaps();
-			#endif
+			children_ [0].mesh_.SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_LEFT ) );
+			children_ [1].mesh_.SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_LEFT ) );
+			children_ [2].mesh_.SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
+			children_ [3].mesh_.SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
 		}
-	}
-
-
-	private void PrintHeightsRow( QuadtreeLODNode node, int row )
-	{
-		int FIRST_ROW_VERTEX_INDEX = row * 11;
-		Debug.LogFormat ("Heights row[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
-		                 row,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+0].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+1].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+2].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+3].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+4].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+5].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+6].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+7].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+8].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+9].y,
-		                 node.innerMesh_.vertices [FIRST_ROW_VERTEX_INDEX+10].y);
-	}
-
-
-	private void PrintHeightsColumn( QuadtreeLODNode node, int column )
-	{
-		Debug.LogFormat ("Heights column[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
-		                 column,
-		                 node.innerMesh_.vertices [column].y,
-		                 node.innerMesh_.vertices [column+11].y,
-		                 node.innerMesh_.vertices [column+22].y,
-		                 node.innerMesh_.vertices [column+33].y,
-		                 node.innerMesh_.vertices [column+44].y,
-		                 node.innerMesh_.vertices [column+55].y,
-		                 node.innerMesh_.vertices [column+66].y,
-		                 node.innerMesh_.vertices [column+77].y,
-		                 node.innerMesh_.vertices [column+88].y,
-		                 node.innerMesh_.vertices [column+99].y,
-		                 node.innerMesh_.vertices [column+110].y);
-	}
-
-
-	private void CheckChildrenHeightMaps()
-	{
-		PrintHeightsRow ( children_[0], 10 );
-		PrintHeightsRow ( children_[1], 0 );
-
-		PrintHeightsRow ( children_[2], 10 );
-		PrintHeightsRow ( children_[3], 0 );
-	
-		PrintHeightsColumn (children_ [0], 0);
-		PrintHeightsColumn (children_ [2], 10);
-
-		PrintHeightsColumn (children_ [1], 0);
-		PrintHeightsColumn (children_ [3], 10);
 	}
 
 
@@ -305,7 +231,7 @@ public class QuadtreeLODNode {
 	public void Render()
 	{
 		if (visible_) {
-			Graphics.DrawMesh (innerMesh_, transform_.localToWorldMatrix, material_, 0);
+			mesh_.Render( transform_.localToWorldMatrix, material_, 0 );
 		}
 		if (AreChildrenLoaded()) {
 			for (int i=0; i<4; i++) {
@@ -421,25 +347,5 @@ public class QuadtreeLODNode {
 			}
 		}
 		return subMatrix;
-	}
-
-
-	private void SetHeightsMap( float[,] heights )
-	{
-		Vector3[] vertices = innerMesh_.vertices;
-		
-		int N_ROWS = heights.GetLength(0);
-		for (int row=0; row<N_ROWS; row++) {
-			// FIXME: This is forcing N_COLUMS = N_ROWS.
-			int N_COLUMNS = N_ROWS;
-			for (int column=0; column<N_COLUMNS; column++) {
-				int VERTEX_INDEX = row * N_COLUMNS + column;
-				vertices[VERTEX_INDEX].y = heights[row,column] / 1000.0f; /// maxHeight;
-			}
-		}
-		
-		innerMesh_.vertices = vertices;
-		innerMesh_.RecalculateBounds ();
-		innerMesh_.RecalculateNormals ();
 	}
 }
