@@ -9,6 +9,8 @@ public class CameraMovement : MonoBehaviour {
 	float velocity = INITIAL_VELOCITY;
 	Vector3 initialPosition = Vector3.zero;
 	const float ROTATION_SENSITIVITY = 5.0f;
+	const float MAX_VELOCITY = 3.0f;
+	const float MIN_VELOCITY = -3.0f;
 
 
 	void Awake(){
@@ -21,6 +23,8 @@ public class CameraMovement : MonoBehaviour {
 		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
 		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
 		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
+
+		velocity = Mathf.Clamp( velocity, MIN_VELOCITY, MAX_VELOCITY );
 		
 		if (VRSettings.enabled) {
 			// Keep moving the player forward.
