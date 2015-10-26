@@ -17,6 +17,7 @@ public class CameraMovement : MonoBehaviour {
 	void Awake(){
 		initialPosition = transform.position;
 		Cursor.lockState = CursorLockMode.Locked;
+		GetComponent<Rigidbody> ().freezeRotation = true;
 	}
 
 
@@ -67,10 +68,5 @@ public class CameraMovement : MonoBehaviour {
 		// Move the player forward with the given speed.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
 		                                       (speed * Time.fixedDeltaTime * Vector3.forward));
-	}
-
-
-	void OnCollisionEnter(Collision collision) {
-		GetComponent<Rigidbody> ().freezeRotation = true;
 	}
 }
