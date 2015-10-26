@@ -8,6 +8,7 @@ public class CameraMovement : MonoBehaviour {
 	const float INITIAL_VELOCITY = 1.0f;
 	float velocity = INITIAL_VELOCITY;
 	Vector3 initialPosition = Vector3.zero;
+	const float ROTATION_SENSITIVITY = 5.0f;
 
 
 	void Awake(){
@@ -51,8 +52,8 @@ public class CameraMovement : MonoBehaviour {
 			
 			// Allow user to fly over the map by moving the mouse.
 			if( Input.GetKey(KeyCode.LeftAlt) ){
-				transform.Rotate ( 5.0f * -Input.GetAxis ("Mouse Y"),
-				                  5.0f * Input.GetAxis ("Mouse X"), 
+				transform.Rotate ( ROTATION_SENSITIVITY * -Input.GetAxis ("Mouse Y"),
+				                  ROTATION_SENSITIVITY * Input.GetAxis ("Mouse X"), 
 				                  0.0f );
 			}
 		}
