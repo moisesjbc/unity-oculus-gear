@@ -20,7 +20,7 @@ public class CameraMovement : MonoBehaviour {
 	}
 
 
-	void LateUpdate () {
+	void FixedUpdate () {
 		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
 		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
 		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
@@ -65,8 +65,7 @@ public class CameraMovement : MonoBehaviour {
 		velocity = Mathf.Clamp( velocity, MIN_VELOCITY, MAX_VELOCITY );
 
 		// Move the player forward with the given velocity.
-		transform.position += 
-			GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-				(velocity * Vector3.forward);
+		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
+		                                       (velocity * Vector3.forward));
 	}
 }
