@@ -52,7 +52,7 @@ public class QuadtreeLODNode {
 		visible_ = true;
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
-
+		
 		bottomLeftCoordinates_ = new Vector2 ( 416000,3067000 );
 		topRightCoordinates_ = new Vector2 ( 466000,3117000 );
 
@@ -423,5 +423,8 @@ public class QuadtreeLODNode {
 		mesh_.vertices = vertices;
 		mesh_.RecalculateBounds ();
 		mesh_.RecalculateNormals ();
+
+		// Add a collider to the node.
+		gameObject_.AddComponent<MeshCollider>();
 	}
 }
