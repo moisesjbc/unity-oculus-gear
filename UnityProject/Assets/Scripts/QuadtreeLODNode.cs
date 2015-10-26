@@ -33,7 +33,7 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( int meshVertexResolution, Transform transform, Material material )
 	{		
-		gameObject_ = new GameObject ();
+		gameObject_ = GameObject.Instantiate( new GameObject() );
 
 		// Create the root mesh.
 		mesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
@@ -61,7 +61,7 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
-		gameObject_ = new GameObject ();
+		gameObject_ = GameObject.Instantiate( new GameObject() );
 
 		// Copy given mesh.
 		mesh_ = new Mesh ();
