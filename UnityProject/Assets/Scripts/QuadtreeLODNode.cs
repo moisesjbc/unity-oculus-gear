@@ -1,4 +1,4 @@
-#define PAINT_QUADS
+//#define PAINT_QUADS
 //#define PRINT_CHILDREN_BOUNDARIES
 
 using UnityEngine;
@@ -11,6 +11,7 @@ public class QuadtreeLODNode {
 	private GameObject dumbGameObject_;
 	private Transform transform_;
 	private Mesh mesh_;
+	private int meshVertexResolution_;
 	private Material material_;
 	private bool visible_;
 	Vector2 bottomLeftCoordinates_;
@@ -33,16 +34,11 @@ public class QuadtreeLODNode {
 	bool childrenHeightMapLoaded = false;
 
 
-	public QuadtreeLODNode( Mesh mesh, Transform transform, Material material )
+	public QuadtreeLODNode( int meshVertexResolution, Transform transform, Material material )
 	{		
-		// Copy given mesh.
-		mesh_ = new Mesh ();
-		mesh_.vertices = mesh.vertices;
-		mesh_.triangles = mesh.triangles;
-		mesh_.uv = mesh.uv;
-		FlipUV ();
-		mesh_.RecalculateNormals ();
-		mesh_.RecalculateBounds ();
+		// Create the root mesh.
+		mesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
+		meshVertexResolution_ = meshVertexResolution;
 
 		// Make this mesh transform relative to parent.
 		dumbGameObject_ = new GameObject ();
@@ -60,7 +56,7 @@ public class QuadtreeLODNode {
 		topRightCoordinates_ = new Vector2 ( 466000,3117000 );
 
 		LoadMap ();
-		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, 11 );
+		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
 	}
 
 
@@ -73,6 +69,7 @@ public class QuadtreeLODNode {
 		mesh_.uv = parent.mesh_.uv;
 		mesh_.RecalculateNormals ();
 		mesh_.RecalculateBounds ();
+		meshVertexResolution_ = parent.meshVertexResolution_;
 
 		// Make this mesh transform relative to parent.
 		dumbGameObject_ = new GameObject ();
@@ -287,7 +284,8 @@ public class QuadtreeLODNode {
 			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
 		}
 
-		int CHILDREN_RESOLUTION = 11 * 2 - 1;
+		int CHILDREN_RESOLUTION = meshVertexResolution_ * 2 - 1;
+		Debug.Log (CHILDREN_RESOLUTION);
 		childrenHeightMapRequest = RequestHeightMap (bottomLeftCoordinates_, topRightCoordinates_, CHILDREN_RESOLUTION );
 	}
 
@@ -424,7 +422,7 @@ public class QuadtreeLODNode {
 			int N_COLUMNS = N_ROWS;
 			for (int column=0; column<N_COLUMNS; column++) {
 				int VERTEX_INDEX = row * N_COLUMNS + column;
-				vertices[VERTEX_INDEX].y = heights[row,N_COLUMNS-1-column] / 1000.0f; /// maxHeight;
+				vertices[VERTEX_INDEX].y = heights[row,column] / 1000.0f; /// maxHeight;
 			}
 		}
 		
