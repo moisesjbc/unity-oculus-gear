@@ -5,13 +5,13 @@ using UnityEngine.VR;
 
 public class CameraMovement : MonoBehaviour {
 	bool mouseLeftButtonPressed = false;
-	const float INITIAL_VELOCITY = 0.0f;
-	float velocity = INITIAL_VELOCITY;
+	const float INITIAL_SPEED = 0.0f;
+	float speed = INITIAL_SPEED;
 	Vector3 initialPosition = Vector3.zero;
 	const float ROTATION_SENSITIVITY = 5.0f;
-	const float MAX_VELOCITY = 3.0f;
-	const float MIN_VELOCITY = -3.0f;
-	const float VELOCITY_STEP = 0.1f;
+	const float MAX_SPEED = 3.0f;
+	const float MIN_SPEED = -3.0f;
+	const float SPEED_STEP = 0.1f;
 
 
 	void Awake(){
@@ -26,31 +26,31 @@ public class CameraMovement : MonoBehaviour {
 		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
 		
 		if (VRSettings.enabled) {
-			// Increase or decrease velocity with Oculus touchpad.
+			// Increase or decrease speed with Oculus touchpad.
 			if (Input.GetMouseButtonDown (0)) {
 				mouseLeftButtonPressed = true;
 			} else if (Input.GetMouseButtonUp (0)) {
 				mouseLeftButtonPressed = false;
 			} else {
 				if (Input.GetAxis ("Mouse X") > 0.0f) {
-					velocity -= VELOCITY_STEP;
+					speed -= SPEED_STEP;
 					mouseLeftButtonPressed = false;
 				} else if (Input.GetAxis ("Mouse X") < 0.0f) {
-					velocity += VELOCITY_STEP;
+					speed += SPEED_STEP;
 					mouseLeftButtonPressed = false;
 				}
 			}
 
 			if (Input.GetMouseButtonDown (1)) {
 				transform.position = initialPosition;
-				velocity = INITIAL_VELOCITY;
+				speed = INITIAL_SPEED;
 			}
 		} else {
-			// Allow user to increase / decrease with the mouse wheel.
+			// Allow user to increase / decrease speed with the mouse wheel.
 			if (Input.GetAxis ("Mouse ScrollWheel") > 0.0f) {
-				velocity += VELOCITY_STEP;
+				speed += SPEED_STEP;
 			} else if (Input.GetAxis ("Mouse ScrollWheel") < 0.0f) {
-				velocity -= VELOCITY_STEP;
+				speed -= SPEED_STEP;
 			}
 			
 			// Allow user to rotate the camera with alt + the mouse.
@@ -61,11 +61,11 @@ public class CameraMovement : MonoBehaviour {
 			}
 		}
 
-		// Clamp velocity.
-		velocity = Mathf.Clamp( velocity, MIN_VELOCITY, MAX_VELOCITY );
+		// Clamp speed.
+		speed = Mathf.Clamp( speed, MIN_SPEED, MAX_SPEED );
 
-		// Move the player forward with the given velocity.
+		// Move the player forward with the given speed.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       (velocity * Time.fixedDeltaTime * Vector3.forward));
+		                                       (speed * Time.fixedDeltaTime * Vector3.forward));
 	}
 }
