@@ -23,13 +23,8 @@ public class CameraMovement : MonoBehaviour {
 		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
 		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
 		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
-
-		velocity = Mathf.Clamp( velocity, MIN_VELOCITY, MAX_VELOCITY );
 		
 		if (VRSettings.enabled) {
-			// Keep moving the player forward.
-			transform.position += GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (velocity * VR_VELOCITY_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
-
 			// Increase or decrease velocity with Oculus touchpad.
 			if (Input.GetMouseButtonDown (0)) {
 				mouseLeftButtonPressed = true;
@@ -50,9 +45,6 @@ public class CameraMovement : MonoBehaviour {
 				velocity = INITIAL_VELOCITY;
 			}
 		} else {
-			// Keep moving the player forward.
-			transform.position += GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (velocity * VR_VELOCITY_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
-
 			// Allow user to increase / decrease with the mouse wheel.
 			if (Input.GetAxis ("Mouse ScrollWheel") > 0.0f) {
 				velocity += 1.0f;
@@ -67,5 +59,13 @@ public class CameraMovement : MonoBehaviour {
 				                  0.0f );
 			}
 		}
+
+		// Clamp velocity.
+		velocity = Mathf.Clamp( velocity, MIN_VELOCITY, MAX_VELOCITY );
+
+		// Move the player forward with the given velocity.
+		transform.position += 
+			GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
+				(velocity * Vector3.forward);
 	}
 }
