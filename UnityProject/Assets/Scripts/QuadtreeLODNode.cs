@@ -47,6 +47,7 @@ public class QuadtreeLODNode {
 		
 		// Copy given material.
 		material_ = new Material (Shader.Find ("Standard"));
+		gameObject_.GetComponent<Renderer>().material = material_;
 
 		visible_ = true;
 
@@ -83,6 +84,7 @@ public class QuadtreeLODNode {
 		transform_.localPosition = localPosition;
 		
 		material_ = new Material (Shader.Find ("Standard"));
+		gameObject_.GetComponent<Renderer>().material = material_;
 #if PAINT_QUADS
 		material_.color = color;
 #endif
