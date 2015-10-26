@@ -5,7 +5,7 @@ using UnityEngine.VR;
 
 public class CameraMovement : MonoBehaviour {
 	bool mouseLeftButtonPressed = false;
-	const float INITIAL_VELOCITY = 1.0f;
+	const float INITIAL_VELOCITY = 0.0f;
 	float velocity = INITIAL_VELOCITY;
 	Vector3 initialPosition = Vector3.zero;
 	const float ROTATION_SENSITIVITY = 5.0f;
