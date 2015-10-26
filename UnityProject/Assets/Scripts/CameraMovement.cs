@@ -12,6 +12,7 @@ public class CameraMovement : MonoBehaviour {
 
 	void Awake(){
 		initialPosition = transform.position;
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 
 
@@ -48,14 +49,11 @@ public class CameraMovement : MonoBehaviour {
 			float mouseZoom = Input.GetAxis ("Mouse ScrollWheel");
 			transform.Translate (mouseZoom * NO_VR_ZOOM_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
 			
-			// Allow user to move over the map by moving the mouse.
-			if (Input.GetMouseButtonDown (0)) {
-				mouseLeftButtonPressed = true;
-			} else if (Input.GetMouseButtonUp (0)) {
-				mouseLeftButtonPressed = false;
-			} else if (mouseLeftButtonPressed) {
-				transform.Translate (-Input.GetAxis ("Mouse Y") * NO_VR_MOVEMENT_HEIGHT_FACTOR * transform.position.y * Vector3.up);
-				transform.Translate (-Input.GetAxis ("Mouse X") * NO_VR_MOVEMENT_HEIGHT_FACTOR * transform.position.y * Vector3.right);
+			// Allow user to fly over the map by moving the mouse.
+			if( Input.GetKey(KeyCode.LeftAlt) ){
+				transform.Rotate ( 5.0f * -Input.GetAxis ("Mouse Y"),
+				                  5.0f * Input.GetAxis ("Mouse X"), 
+				                  0.0f );
 			}
 		}
 	}
