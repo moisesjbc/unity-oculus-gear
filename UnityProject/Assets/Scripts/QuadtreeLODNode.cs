@@ -6,10 +6,6 @@ using System.Collections;
 
 public class QuadtreeLODNode {
 	private GameObject gameObject_;
-	// FIXME: This DumbGameObject is required for making children 
-	// transforms relative to parent ones. Find a workaround so
-	// this isn't necessary.
-	private GameObject dumbGameObject_;
 	private Transform transform_;
 	private Mesh mesh_;
 	private int meshVertexResolution_;
@@ -45,10 +41,9 @@ public class QuadtreeLODNode {
 		meshVertexResolution_ = meshVertexResolution;
 
 		// Make this mesh transform relative to parent.
-		dumbGameObject_ = new GameObject ();
-		transform_ = dumbGameObject_.transform;
+		transform_ = gameObject_.transform;
 		transform_.parent = transform;
-
+		
 		// Copy given material.
 		material_ = new Material (Shader.Find ("Standard"));
 
@@ -79,9 +74,8 @@ public class QuadtreeLODNode {
 		gameObject_.AddComponent<MeshFilter> ().mesh = mesh_;
 
 		// Make this mesh transform relative to parent.
-		dumbGameObject_ = new GameObject ();
-		transform_ = dumbGameObject_.transform;
-		transform_.parent = parent.transform_;
+		transform_ = gameObject_.transform;
+		transform_.parent = parent.gameObject_.transform;
 
 		transform_.localScale = new Vector3( 0.5f, 1.0f, 0.5f );
 		transform_.localPosition = localPosition;
