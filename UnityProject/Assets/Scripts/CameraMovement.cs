@@ -11,6 +11,7 @@ public class CameraMovement : MonoBehaviour {
 	const float ROTATION_SENSITIVITY = 5.0f;
 	const float MAX_VELOCITY = 3.0f;
 	const float MIN_VELOCITY = -3.0f;
+	const float VELOCITY_STEP = 0.1f;
 
 
 	void Awake(){
@@ -32,10 +33,10 @@ public class CameraMovement : MonoBehaviour {
 				mouseLeftButtonPressed = false;
 			} else {
 				if (Input.GetAxis ("Mouse X") > 0.0f) {
-					velocity -= 1.0f;
+					velocity -= VELOCITY_STEP;
 					mouseLeftButtonPressed = false;
 				} else if (Input.GetAxis ("Mouse X") < 0.0f) {
-					velocity += 1.0f;
+					velocity += VELOCITY_STEP;
 					mouseLeftButtonPressed = false;
 				}
 			}
@@ -47,9 +48,9 @@ public class CameraMovement : MonoBehaviour {
 		} else {
 			// Allow user to increase / decrease with the mouse wheel.
 			if (Input.GetAxis ("Mouse ScrollWheel") > 0.0f) {
-				velocity += 1.0f;
+				velocity += VELOCITY_STEP;
 			} else if (Input.GetAxis ("Mouse ScrollWheel") < 0.0f) {
-				velocity -= 1.0f;
+				velocity -= VELOCITY_STEP;
 			}
 			
 			// Allow user to rotate the camera with alt + the mouse.
