@@ -68,4 +68,9 @@ public class CameraMovement : MonoBehaviour {
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
 		                                       (speed * Time.fixedDeltaTime * Vector3.forward));
 	}
+
+
+	void OnCollisionEnter(Collision collision) {
+		GetComponent<Rigidbody> ().freezeRotation = true;
+	}
 }
