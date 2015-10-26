@@ -90,7 +90,8 @@ public class QuadtreeLODNode {
 #endif
 		depth_ = parent.depth_ + 1;
 
-		visible_ = true;
+		visible_ = false;
+		gameObject_.GetComponent<MeshRenderer> ().enabled = false;
 
 		bottomLeftCoordinates_ = bottomLeftCoordinates;
 		topRightCoordinates_ = topRightCoordinates;
@@ -115,11 +116,10 @@ public class QuadtreeLODNode {
 	public void SetVisible( bool visible )
 	{
 		visible_ = visible;
-		gameObject_.SetActive (visible);
+		gameObject_.GetComponent<MeshRenderer> ().enabled = visible;
 		if (visible_ == false && children_[0] != null) {
 			for( int i = 0; i < children_.Length; i++ ){
 				children_[i].SetVisible (false);
-				children_[i].gameObject_.SetActive (false);
 			}
 		}
 	}
