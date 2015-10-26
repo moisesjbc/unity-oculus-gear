@@ -60,9 +60,11 @@ public class BorderMesh {
 			
 		mesh_ = new Mesh();
 
+		mesh_.vertices = new Vector3[innerVertices.Length + outerVertices.Length];
 		System.Array.Copy (innerVertices, mesh_.vertices, innerVertices.Length);
 		System.Array.Copy (outerVertices, 0, mesh_.vertices, innerVertices.Length, outerVertices.Length);
 
+		mesh_.uv = new Vector2[innerUV.Length + outerVertices.Length];
 		System.Array.Copy (innerUV, mesh_.uv, innerUV.Length);
 		System.Array.Copy (outerUV, 0, mesh_.uv, innerUV.Length, outerUV.Length);
 
