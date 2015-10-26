@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 
 public class QuadtreeLODNode {
+	private GameObject gameObject_;
 	// FIXME: This DumbGameObject is required for making children 
 	// transforms relative to parent ones. Find a workaround so
 	// this isn't necessary.
@@ -36,8 +37,11 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( int meshVertexResolution, Transform transform, Material material )
 	{		
+		gameObject_ = new GameObject ();
+
 		// Create the root mesh.
 		mesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
+		gameObject_.AddComponent<MeshFilter> ().mesh = mesh_;
 		meshVertexResolution_ = meshVertexResolution;
 
 		// Make this mesh transform relative to parent.
@@ -62,6 +66,8 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
+		gameObject_ = new GameObject ();
+
 		// Copy given mesh.
 		mesh_ = new Mesh ();
 		mesh_.vertices = parent.mesh_.vertices;
@@ -70,6 +76,7 @@ public class QuadtreeLODNode {
 		mesh_.RecalculateNormals ();
 		mesh_.RecalculateBounds ();
 		meshVertexResolution_ = parent.meshVertexResolution_;
+		gameObject_.AddComponent<MeshFilter> ().mesh = mesh_;
 
 		// Make this mesh transform relative to parent.
 		dumbGameObject_ = new GameObject ();
