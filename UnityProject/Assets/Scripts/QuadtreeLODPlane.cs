@@ -12,6 +12,5 @@ public class QuadtreeLODPlane : MonoBehaviour {
 
 	void Update () {
 		rootNode.Update ();
-		rootNode.Render ();
 	}
 }

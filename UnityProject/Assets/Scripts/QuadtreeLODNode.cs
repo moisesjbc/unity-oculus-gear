@@ -297,19 +297,6 @@ public class QuadtreeLODNode {
 	}
 
 
-	public void Render()
-	{
-		if (visible_) {
-			Graphics.DrawMesh (mesh_, transform_.localToWorldMatrix, material_, 0);
-		}
-		if (AreChildrenLoaded()) {
-			for (int i=0; i<4; i++) {
-				children_ [i].Render ();
-			}
-		}
-	}
-
-
 	private void LoadMap() {
 		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=128&HEIGHT=128&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
