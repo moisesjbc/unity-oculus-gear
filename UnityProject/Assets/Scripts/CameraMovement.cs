@@ -66,6 +66,6 @@ public class CameraMovement : MonoBehaviour {
 
 		// Move the player forward with the given velocity.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       (velocity * Vector3.forward));
+		                                       (velocity * Time.fixedDeltaTime * Vector3.forward));
 	}
 }
