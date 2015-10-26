@@ -46,11 +46,17 @@ public class CameraMovement : MonoBehaviour {
 				velocity = INITIAL_VELOCITY;
 			}
 		} else {
-			// Allow user to zoom in and out with the mouse whell.
-			float mouseZoom = Input.GetAxis ("Mouse ScrollWheel");
-			transform.Translate (mouseZoom * NO_VR_ZOOM_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
+			// Keep moving the player forward.
+			transform.position += GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (velocity * VR_VELOCITY_HEIGHT_FACTOR * transform.position.y * Vector3.forward);
+
+			// Allow user to increase / decrease with the mouse wheel.
+			if (Input.GetAxis ("Mouse ScrollWheel") > 0.0f) {
+				velocity += 1.0f;
+			} else if (Input.GetAxis ("Mouse ScrollWheel") < 0.0f) {
+				velocity -= 1.0f;
+			}
 			
-			// Allow user to fly over the map by moving the mouse.
+			// Allow user to rotate the camera with alt + the mouse.
 			if( Input.GetKey(KeyCode.LeftAlt) ){
 				transform.Rotate ( ROTATION_SENSITIVITY * -Input.GetAxis ("Mouse Y"),
 				                  ROTATION_SENSITIVITY * Input.GetAxis ("Mouse X"), 
