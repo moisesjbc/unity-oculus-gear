@@ -117,6 +117,7 @@ public class QuadtreeLODNode {
 	{
 		visible_ = visible;
 		gameObject_.GetComponent<MeshRenderer> ().enabled = visible;
+		gameObject_.GetComponent<Collider> ().enabled = visible;
 		if (visible_ == false && children_[0] != null) {
 			for( int i = 0; i < children_.Length; i++ ){
 				children_[i].SetVisible (false);
