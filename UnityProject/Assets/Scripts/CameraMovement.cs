@@ -9,9 +9,9 @@ public class CameraMovement : MonoBehaviour {
 	float speed = INITIAL_SPEED;
 	Vector3 initialPosition = Vector3.zero;
 	const float ROTATION_SENSITIVITY = 5.0f;
-	const float MAX_SPEED = 3.0f;
-	const float MIN_SPEED = -3.0f;
-	const float SPEED_STEP = 0.1f;
+	const float MAX_SPEED = 5.0f;
+	const float MIN_SPEED = -5.0f;
+	const float SPEED_STEP = 0.5f;
 
 
 	void Awake(){
