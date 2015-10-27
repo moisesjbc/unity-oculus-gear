@@ -31,13 +31,13 @@ public class QuadtreeLODNode {
 	bool childrenHeightMapLoaded = false;
 
 
-	public QuadtreeLODNode( int meshVertexResolution, Transform transform, Material material )
+	public QuadtreeLODNode( float meshSize, int meshVertexResolution, Transform transform, Material material )
 	{		
 		gameObject_ = GameObject.Instantiate( new GameObject() );
 		gameObject_.AddComponent<MeshRenderer>();
 
 		// Create the root mesh.
-		mesh_ = MeshFactory.CreateMesh ( 10.0f, meshVertexResolution );
+		mesh_ = MeshFactory.CreateMesh ( meshSize, meshVertexResolution );
 		gameObject_.AddComponent<MeshFilter> ().mesh = mesh_;
 		meshVertexResolution_ = meshVertexResolution;
 
