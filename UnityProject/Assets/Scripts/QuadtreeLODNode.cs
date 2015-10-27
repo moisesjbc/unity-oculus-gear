@@ -408,6 +408,7 @@ public class QuadtreeLODNode {
 
 	private void SetHeightsMap( float[,] heights )
 	{
+		float HEIGHT_DIVISOR = 1000.0f * (10.0f / mesh_.bounds.size.x);
 		Vector3[] vertices = mesh_.vertices;
 		
 		int N_ROWS = heights.GetLength(0);
@@ -416,7 +417,7 @@ public class QuadtreeLODNode {
 			int N_COLUMNS = N_ROWS;
 			for (int column=0; column<N_COLUMNS; column++) {
 				int VERTEX_INDEX = row * N_COLUMNS + column;
-				vertices[VERTEX_INDEX].y = heights[row,column] / 1000.0f; /// maxHeight;
+				vertices[VERTEX_INDEX].y = heights[row,column] / HEIGHT_DIVISOR;
 			}
 		}
 		
