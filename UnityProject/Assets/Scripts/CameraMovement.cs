@@ -21,6 +21,15 @@ public class CameraMovement : MonoBehaviour {
 	}
 
 
+	void ModifySpeed( float delta )
+	{
+		speed += delta;
+
+		// Clamp speed.
+		speed = Mathf.Clamp( speed, MIN_SPEED, MAX_SPEED );
+	}
+
+
 	void FixedUpdate () {
 		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
 		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
@@ -34,10 +43,10 @@ public class CameraMovement : MonoBehaviour {
 				mouseLeftButtonPressed = false;
 			} else if( mouseLeftButtonPressed ){
 				if (Input.GetAxis ("Mouse X") > 0.0f) {
-					speed -= SPEED_STEP;
+					ModifySpeed( -SPEED_STEP );
 					mouseLeftButtonPressed = false;
 				} else if (Input.GetAxis ("Mouse X") < 0.0f) {
-					speed += SPEED_STEP;
+					ModifySpeed( +SPEED_STEP );
 					mouseLeftButtonPressed = false;
 				}
 			}
@@ -49,9 +58,9 @@ public class CameraMovement : MonoBehaviour {
 		} else {
 			// Allow user to increase / decrease speed with the mouse wheel.
 			if (Input.GetAxis ("Mouse ScrollWheel") > 0.0f) {
-				speed += SPEED_STEP;
+				ModifySpeed( +SPEED_STEP );
 			} else if (Input.GetAxis ("Mouse ScrollWheel") < 0.0f) {
-				speed -= SPEED_STEP;
+				ModifySpeed( -SPEED_STEP );
 			}
 			
 			// Allow user to rotate the camera with alt + the mouse.
@@ -61,9 +70,6 @@ public class CameraMovement : MonoBehaviour {
 				                  0.0f );
 			}
 		}
-
-		// Clamp speed.
-		speed = Mathf.Clamp( speed, MIN_SPEED, MAX_SPEED );
 
 		// Move the player forward with the given speed.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
