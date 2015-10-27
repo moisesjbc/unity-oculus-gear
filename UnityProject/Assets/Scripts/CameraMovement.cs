@@ -32,7 +32,7 @@ public class CameraMovement : MonoBehaviour {
 				mouseLeftButtonPressed = true;
 			} else if (Input.GetMouseButtonUp (0)) {
 				mouseLeftButtonPressed = false;
-			} else {
+			} else if( mouseLeftButtonPressed ){
 				if (Input.GetAxis ("Mouse X") > 0.0f) {
 					speed -= SPEED_STEP;
 					mouseLeftButtonPressed = false;
