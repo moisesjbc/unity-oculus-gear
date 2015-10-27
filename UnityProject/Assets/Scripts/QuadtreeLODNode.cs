@@ -115,9 +115,17 @@ public class QuadtreeLODNode {
 
 	public void SetVisible( bool visible )
 	{
+		// Set node visibility.
 		visible_ = visible;
 		gameObject_.GetComponent<MeshRenderer> ().enabled = visible;
-		gameObject_.GetComponent<Collider> ().enabled = visible;
+
+		// Enable or disable collider according to new visibility value.
+		Collider collider = gameObject_.GetComponent<Collider>();
+		if ( collider != null ) {
+			collider.enabled = visible;
+		}
+
+		// Apply visibility change to children (only if v = false).
 		if (visible_ == false && children_[0] != null) {
 			for( int i = 0; i < children_.Length; i++ ){
 				children_[i].SetVisible (false);
