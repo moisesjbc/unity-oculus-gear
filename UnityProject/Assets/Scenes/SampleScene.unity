@@ -305,7 +305,7 @@ GameObject:
   - 114: {fileID: 278453129}
   m_Layer: 0
   m_Name: Pickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -341,7 +341,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 278453124}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -564,6 +564,17 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: .25
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &873849522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 873849515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d791643238021984c8ec8d65b6b78186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &995358212
 Prefab:
   m_ObjectHideFlags: 0
@@ -822,7 +833,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 428496, guid: 29411133347733f45b9cccf9df3f3cc2, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: .300000012
       objectReference: {fileID: 0}
     - target: {fileID: 428496, guid: 29411133347733f45b9cccf9df3f3cc2, type: 2}
       propertyPath: m_LocalPosition.z
