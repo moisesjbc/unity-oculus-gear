@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class QuadtreeLODPlane : MonoBehaviour {
 	QuadtreeLODNode rootNode = null;
@@ -28,10 +29,15 @@ public class QuadtreeLODPlane : MonoBehaviour {
 		Vector2 bottomLeftCoordinates = Vector2.zero;
 		Vector2 topRightCoordinates = Vector2.zero;
 
+		List<Vector3> pickupPositions = new List<Vector3>();
+
 		switch (island) {
 			case Island.GRAN_CANARIA:
 				bottomLeftCoordinates = new Vector2 ( 416000,3067000 );
 				topRightCoordinates = new Vector2 ( 466000,3117000 );
+				
+				pickupPositions.Add( new Vector3( 0f, 3f, -15f ) );
+				pickupPositions.Add( new Vector3( -3.6f, 5.2f, 5f ) );
 			break;
 			case Island.TENERIFE:
 				bottomLeftCoordinates = new Vector2 ( 310000,3090000 );
@@ -41,6 +47,11 @@ public class QuadtreeLODPlane : MonoBehaviour {
 				bottomLeftCoordinates = new Vector2 ( 192500,3145000 );
 				topRightCoordinates = new Vector2 ( 247500,3200000 );
 			break;
+		}
+
+		foreach( Vector3 pickupPosition in pickupPositions )
+		{
+			Instantiate( Resources.Load("Pickup"), pickupPosition, Quaternion.identity );
 		}
 
 		rootNode = new QuadtreeLODNode( 
