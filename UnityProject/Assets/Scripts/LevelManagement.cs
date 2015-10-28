@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class LevelManagement : MonoBehaviour {
 	
@@ -11,13 +12,14 @@ public class LevelManagement : MonoBehaviour {
 	};
 	
 	public Island island;
+	private List<Vector3> pickupPositions = new List<Vector3>();
+	private Text scoreText;
+	private PickupCollection pickupsCollector;
 
 	// Use this for initialization
 	void Awake () {
 		Vector2 bottomLeftCoordinates = Vector2.zero;
 		Vector2 topRightCoordinates = Vector2.zero;
-
-		List<Vector3> pickupPositions = new List<Vector3>();
 
 		switch (island) {
 			case Island.GRAN_CANARIA:
@@ -44,13 +46,18 @@ public class LevelManagement : MonoBehaviour {
 
 		QuadtreeLODPlane[] maps = gameObject.GetComponentsInChildren<QuadtreeLODPlane> ();
 	
+		scoreText = GameObject.Find ("ScoreText").GetComponent<UnityEngine.UI.Text> ();
+		pickupsCollector = gameObject.GetComponentInChildren<PickupCollection> ();
+
 		foreach( QuadtreeLODPlane map in maps ){
 			map.Reset( bottomLeftCoordinates, topRightCoordinates );
 		}
+
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		scoreText.text = "Score: " + pickupsCollector.score + " / " + pickupPositions.Count.ToString();
 	}
 }
