@@ -6,7 +6,8 @@ public class QuadtreeLODPlane : MonoBehaviour {
 
 	public enum Island {
 		GRAN_CANARIA,
-		TENERIFE
+		TENERIFE,
+		LA_PALMA
 	};
 
 	public Island island;
@@ -35,6 +36,10 @@ public class QuadtreeLODPlane : MonoBehaviour {
 			case Island.TENERIFE:
 				bottomLeftCoordinates = new Vector2 ( 310000,3090000 );
 				topRightCoordinates = new Vector2 ( 392000,3172000 );
+			break;
+			case Island.LA_PALMA:
+				bottomLeftCoordinates = new Vector2 ( 192500,3145000 );
+				topRightCoordinates = new Vector2 ( 247500,3200000 );
 			break;
 		}
 
