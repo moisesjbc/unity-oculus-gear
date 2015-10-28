@@ -31,7 +31,12 @@ public class QuadtreeLODNode {
 	bool childrenHeightMapLoaded = false;
 
 
-	public QuadtreeLODNode( float meshSize, int meshVertexResolution, Transform transform, Material material )
+	public QuadtreeLODNode( float meshSize, 
+	                       int meshVertexResolution, 
+	                       Vector2 bottomLeftCoordinates,
+	                       Vector2 topLeftCoordinates,
+	                       Transform transform, 
+	                       Material material )
 	{		
 		gameObject_ = GameObject.Instantiate( new GameObject() );
 		gameObject_.AddComponent<MeshRenderer>();
@@ -53,8 +58,8 @@ public class QuadtreeLODNode {
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 		
-		bottomLeftCoordinates_ = new Vector2 ( 416000,3067000 );
-		topRightCoordinates_ = new Vector2 ( 466000,3117000 );
+		bottomLeftCoordinates_ = bottomLeftCoordinates;
+		topRightCoordinates_ = topLeftCoordinates;
 
 		LoadMap ();
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );

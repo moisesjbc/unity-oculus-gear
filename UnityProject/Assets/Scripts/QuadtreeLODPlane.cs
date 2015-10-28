@@ -17,7 +17,17 @@ public class QuadtreeLODPlane : MonoBehaviour {
 
 		float mapSize = Mathf.Max ( meshSize.x, meshSize.z );
 
-		rootNode = new QuadtreeLODNode( mapSize, 20, transform, this.GetComponent<Material>() );
+		Vector2 bottomLeftCoordinates = new Vector2 ( 416000,3067000 );
+		Vector2 topRightCoordinates = new Vector2 ( 466000,3117000 );
+
+		rootNode = new QuadtreeLODNode( 
+		                               mapSize, 
+		                               20, 
+		                               bottomLeftCoordinates,
+		                               topRightCoordinates,
+		                               transform, 
+		                               this.GetComponent<Material>() 
+		                               );
 		GetComponent<MeshRenderer> ().enabled = false;
 	}
 
