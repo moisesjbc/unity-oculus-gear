@@ -102,7 +102,10 @@ public class QuadtreeLODNode {
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 
-		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
+		float mapSize = topRightCoordinates_.x - bottomLeftCoordinates_.x;
+		Vector2 mapSizeVector = new Vector2( mapSize, mapSize );
+
+		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
 
@@ -179,7 +182,11 @@ public class QuadtreeLODNode {
 
 		if (!heightMapLoaded && heightMapRequest.isDone) {
 			heightMapLoaded = true;
-			SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+			if( depth_ == 0 ){
+				SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+			}else{
+				SetHeightsMap( GetSubMatrix( GetHeightsMatrix( heightMapRequest.text ), meshVertexResolution_ - 1, meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1 ) );
+			}
 		}
 	}
 
