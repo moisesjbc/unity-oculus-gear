@@ -15,6 +15,8 @@ public class LevelManagement : MonoBehaviour {
 	private List<Vector3> pickupPositions = new List<Vector3>();
 	private Text scoreText;
 	private PickupCollection pickupsCollector;
+	public GameObject leftPortal;
+	public GameObject rightPortal;
 
 	// Use this for initialization
 	void Awake () {
@@ -35,20 +37,29 @@ public class LevelManagement : MonoBehaviour {
 		Vector2 topRightCoordinates = Vector2.zero;
 		
 		switch (island) {
-		case Island.GRAN_CANARIA:
-			bottomLeftCoordinates = new Vector2 ( 416000,3067000 );
-			topRightCoordinates = new Vector2 ( 466000,3117000 );
-			
-			pickupPositions.Add( new Vector3( 0f, 3f, -15f ) );
-			pickupPositions.Add( new Vector3( -3.6f, 5.2f, 5f ) );
+			case Island.GRAN_CANARIA:
+				bottomLeftCoordinates = new Vector2 ( 416000,3067000 );
+				topRightCoordinates = new Vector2 ( 466000,3117000 );
+				
+				pickupPositions.Add( new Vector3( 0f, 3f, -15f ) );
+				pickupPositions.Add( new Vector3( -3.6f, 5.2f, 5f ) );
+
+				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.TENERIFE;
+				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.LA_PALMA;
 			break;
-		case Island.TENERIFE:
-			bottomLeftCoordinates = new Vector2 ( 310000,3090000 );
-			topRightCoordinates = new Vector2 ( 392000,3172000 );
+			case Island.TENERIFE:
+				bottomLeftCoordinates = new Vector2 ( 310000,3090000 );
+				topRightCoordinates = new Vector2 ( 392000,3172000 );
+
+				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.LA_PALMA;
+				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.GRAN_CANARIA;
 			break;
-		case Island.LA_PALMA:
-			bottomLeftCoordinates = new Vector2 ( 192500,3145000 );
-			topRightCoordinates = new Vector2 ( 247500,3200000 );
+			case Island.LA_PALMA:
+				bottomLeftCoordinates = new Vector2 ( 192500,3145000 );
+				topRightCoordinates = new Vector2 ( 247500,3200000 );
+
+				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.GRAN_CANARIA;
+				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.TENERIFE;
 			break;
 		}
 		
