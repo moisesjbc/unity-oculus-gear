@@ -21,6 +21,12 @@ public class CameraMovement : MonoBehaviour {
 	}
 
 
+	public void Reset()
+	{
+		transform.position = initialPosition;
+	}
+
+
 	void ModifySpeed( float delta )
 	{
 		speed += delta;
