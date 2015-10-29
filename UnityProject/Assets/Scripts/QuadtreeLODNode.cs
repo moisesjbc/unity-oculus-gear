@@ -30,6 +30,7 @@ public class QuadtreeLODNode {
 	WWW childrenHeightMapRequest = null;
 	bool childrenHeightMapLoaded = false;
 
+	static GameObject emptyGameObject = new GameObject();
 
 	public QuadtreeLODNode( float meshSize, 
 	                       int meshVertexResolution, 
@@ -38,8 +39,9 @@ public class QuadtreeLODNode {
 	                       Transform transform, 
 	                       Material material )
 	{		
-		gameObject_ = GameObject.Instantiate( new GameObject() );
+		gameObject_ = GameObject.Instantiate( emptyGameObject );
 		gameObject_.AddComponent<MeshRenderer>();
+		gameObject_.tag = "MapSector";
 
 		// Create the root mesh.
 		mesh_ = MeshFactory.CreateMesh ( meshSize, meshVertexResolution );
@@ -68,7 +70,7 @@ public class QuadtreeLODNode {
 
 	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
 	{
-		gameObject_ = GameObject.Instantiate( new GameObject() );
+		gameObject_ = GameObject.Instantiate( emptyGameObject );
 		gameObject_.AddComponent<MeshRenderer>();
 
 		// Copy given mesh.
@@ -80,6 +82,7 @@ public class QuadtreeLODNode {
 		mesh_.RecalculateBounds ();
 		meshVertexResolution_ = parent.meshVertexResolution_;
 		gameObject_.AddComponent<MeshFilter> ().mesh = mesh_;
+		gameObject_.tag = "MapSector";
 
 		// Make this mesh transform relative to parent.
 		transform_ = gameObject_.transform;
