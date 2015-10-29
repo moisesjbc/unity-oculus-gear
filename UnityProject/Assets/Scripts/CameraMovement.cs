@@ -24,6 +24,7 @@ public class CameraMovement : MonoBehaviour {
 	public void Reset()
 	{
 		transform.position = initialPosition;
+		UnityEngine.VR.InputTracking.Recenter ();
 	}
 
 
