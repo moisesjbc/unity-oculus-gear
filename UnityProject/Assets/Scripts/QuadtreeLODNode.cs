@@ -27,9 +27,6 @@ public class QuadtreeLODNode {
 	WWW heightMapRequest = null;
 	bool heightMapLoaded = false;
 
-	WWW childrenHeightMapRequest = null;
-	bool childrenHeightMapLoaded = false;
-
 	static GameObject emptyGameObject = new GameObject();
 
 	public QuadtreeLODNode( float meshSize, 
@@ -107,6 +104,11 @@ public class QuadtreeLODNode {
 		LoadMap ();
 
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
+
+		float mapSize = topRightCoordinates_.x - bottomLeftCoordinates_.x;
+		Vector2 mapSizeVector = new Vector2( mapSize, mapSize );
+
+		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
 
@@ -181,79 +183,14 @@ public class QuadtreeLODNode {
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
 
-		if (depth_ == 0 && !heightMapLoaded && heightMapRequest.isDone) {
+		if (!heightMapLoaded && heightMapRequest.isDone) {
 			heightMapLoaded = true;
-			SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+			if( depth_ == 0 ){
+				SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
+			}else{
+				SetHeightsMap( GetSubMatrix( GetHeightsMatrix( heightMapRequest.text ), meshVertexResolution_ - 1, meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1 ) );
+			}
 		}
-
-		if (!childrenHeightMapLoaded && childrenHeightMapRequest != null && childrenHeightMapRequest.isDone) {
-			childrenHeightMapLoaded = true;
-			float [,] M = GetHeightsMatrix( childrenHeightMapRequest.text );
-
-			Debug.Log ( "Setting children height maps" );
-
-			children_ [0].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_LEFT ) );
-			children_ [1].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_LEFT ) );
-			children_ [2].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.TOP_RIGHT ) );
-			children_ [3].SetHeightsMap( GetSubHeightsMatrix( M, SubmatrixPosition.BOTTOM_RIGHT ) );
-
-			#if PRINT_CHILDREN_BOUNDARIES
-				CheckChildrenHeightMaps();
-			#endif
-		}
-	}
-
-
-	private void PrintHeightsRow( QuadtreeLODNode node, int row )
-	{
-		int FIRST_ROW_VERTEX_INDEX = row * 11;
-		Debug.LogFormat ("Heights row[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
-		                 row,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+0].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+1].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+2].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+3].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+4].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+5].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+6].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+7].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+8].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+9].y,
-		                 node.mesh_.vertices [FIRST_ROW_VERTEX_INDEX+10].y);
-	}
-
-
-	private void PrintHeightsColumn( QuadtreeLODNode node, int column )
-	{
-		Debug.LogFormat ("Heights column[{0}]: {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}",
-		                 column,
-		                 node.mesh_.vertices [column].y,
-		                 node.mesh_.vertices [column+11].y,
-		                 node.mesh_.vertices [column+22].y,
-		                 node.mesh_.vertices [column+33].y,
-		                 node.mesh_.vertices [column+44].y,
-		                 node.mesh_.vertices [column+55].y,
-		                 node.mesh_.vertices [column+66].y,
-		                 node.mesh_.vertices [column+77].y,
-		                 node.mesh_.vertices [column+88].y,
-		                 node.mesh_.vertices [column+99].y,
-		                 node.mesh_.vertices [column+110].y);
-	}
-
-
-	private void CheckChildrenHeightMaps()
-	{
-		PrintHeightsRow ( children_[0], 10 );
-		PrintHeightsRow ( children_[1], 0 );
-
-		PrintHeightsRow ( children_[2], 10 );
-		PrintHeightsRow ( children_[3], 0 );
-	
-		PrintHeightsColumn (children_ [0], 0);
-		PrintHeightsColumn (children_ [2], 10);
-
-		PrintHeightsColumn (children_ [1], 0);
-		PrintHeightsColumn (children_ [3], 10);
 	}
 
 
@@ -307,10 +244,6 @@ public class QuadtreeLODNode {
 		for( int i=0; i<4; i++ ){
 			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
 		}
-
-		int CHILDREN_RESOLUTION = meshVertexResolution_ * 2 - 1;
-		Debug.Log (CHILDREN_RESOLUTION);
-		childrenHeightMapRequest = RequestHeightMap (bottomLeftCoordinates_, topRightCoordinates_, CHILDREN_RESOLUTION );
 	}
 
 
@@ -349,9 +282,9 @@ public class QuadtreeLODNode {
 
 
 	private bool AreChildrenLoaded(){
-		if (children_ [0] != null && childrenHeightMapLoaded) {
+		if (children_ [0] != null) {
 			for (int i = 0; i < 4; i++) {
-				if (children_ [i].textureLoaded == false) {
+				if (children_ [i].textureLoaded == false || children_ [i].heightMapLoaded == false) {
 					return false;
 				}
 			}
@@ -379,27 +312,6 @@ public class QuadtreeLODNode {
 		}
 		
 		return heightsMatrix;
-	}
-
-	enum SubmatrixPosition {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
-
-	private float[,] GetSubHeightsMatrix ( float[,] heightsMatrix, 
-	                                       SubmatrixPosition submatrixPosition )
-	{
-		int N = heightsMatrix.GetLength (0);
-
-		switch (submatrixPosition) {
-			case SubmatrixPosition.TOP_LEFT:
-				return GetSubMatrix( heightsMatrix, 0, 0, N/2+1, N/2+1 );
-			case SubmatrixPosition.TOP_RIGHT:
-				return GetSubMatrix( heightsMatrix, 0, N/2, N/2+1, N );
-			case SubmatrixPosition.BOTTOM_LEFT:
-				return GetSubMatrix( heightsMatrix, N/2, 0, N, N/2+1 );
-			case SubmatrixPosition.BOTTOM_RIGHT:
-				return GetSubMatrix( heightsMatrix, N/2, N/2, N, N );
-			default:
-				return GetSubMatrix( heightsMatrix, 0, 0, N, N );
-		}
 	}
 
 
