@@ -308,6 +308,7 @@ public class QuadtreeLODNode {
 			
 			for(int j=0; j<N_COLUMNS; j++){
 				heightsMatrix[i,j] = float.Parse ( heightsStrLine[j] );
+				heightsMatrix[i,j] = Mathf.Max( heightsMatrix[i,j], 0.0f );
 			}
 		}
 		
