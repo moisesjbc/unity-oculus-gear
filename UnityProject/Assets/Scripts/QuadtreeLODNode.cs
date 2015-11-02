@@ -19,8 +19,6 @@ public class QuadtreeLODNode {
 	private int depth_ = 0;
 	const int MAX_DEPTH = 7;
 
-	const float THRESHOLD_FACTOR = 2.5f;
-
 	WWW wwwService_ = null;
 	bool textureLoaded = false;
 
@@ -28,6 +26,7 @@ public class QuadtreeLODNode {
 	bool heightMapLoaded = false;
 
 	static GameObject emptyGameObject = new GameObject();
+
 
 	public QuadtreeLODNode( float meshSize, 
 	                       int meshVertexResolution, 
@@ -147,27 +146,37 @@ public class QuadtreeLODNode {
 
 	public void Update()
 	{
-		float distanceToCamera = Vector3.Distance ( Camera.main.transform.position, transform_.position );
-		Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
-
-		// Subdivide the plane if camera is closer than a threshold.
-		if( visible_ && distanceToCamera < THRESHOLD_FACTOR * meshSize.x ){
-			// Create children if they don't exist.
-			if( depth_ < MAX_DEPTH && children_[0] == null ){
-				CreateChildren ( meshSize );
-			}
+		if (visible_ || AreChildrenLoaded()) {
+			const float THRESHOLD_FACTOR = 3.0f;
 			
-			// Make this node invisible and children visible.
-			if( AreChildrenLoaded() ){
-				SetVisible (false);
-				for( int i = 0; i < children_.Length; i++ ){
-					children_[i].SetVisible (true);
+			Vector3 cameraPos = Camera.main.transform.position;
+			float distanceCameraBorder = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.ClosestPoint (cameraPos));
+			float distanceCameraCenter = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.center);
+			float radius = Mathf.Abs ( distanceCameraCenter - distanceCameraBorder );
+
+			// Subdivide the plane if camera is closer than a threshold.
+			if (visible_) {
+				Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
+
+				if (distanceCameraBorder < THRESHOLD_FACTOR * radius) {
+					// Create children if they don't exist.
+					if (depth_ < MAX_DEPTH && children_ [0] == null) {
+						CreateChildren (meshSize);
+					}
+				
+					// Make this node invisible and children visible.
+					if (AreChildrenLoaded ()) {
+						SetVisible (false);
+						for (int i = 0; i < children_.Length; i++) {
+							children_ [i].SetVisible (true);
+						}
+					}
 				}
-			}
-		}else if( AreChildrenLoaded () && distanceToCamera >= THRESHOLD_FACTOR * meshSize.x ){
-			SetVisible (true);
-			for( int i = 0; i < children_.Length; i++ ){
-				children_[i].SetVisible (false);
+			} else if (AreChildrenLoaded () && distanceCameraBorder >= THRESHOLD_FACTOR * radius ) {
+				SetVisible (true);
+				for (int i = 0; i < children_.Length; i++) {
+					children_ [i].SetVisible (false);
+				}
 			}
 		}
 
