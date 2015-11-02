@@ -44,22 +44,22 @@ public class LevelManagement : MonoBehaviour {
 				pickupPositions.Add( new Vector3( 0f, 3f, -15f ) );
 				pickupPositions.Add( new Vector3( -3.6f, 5.2f, 5f ) );
 
-				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.TENERIFE;
-				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.LA_PALMA;
+				leftPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.TENERIFE );
+				rightPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.LA_PALMA );
 			break;
 			case Island.TENERIFE:
 				bottomLeftCoordinates = new Vector2 ( 310000,3090000 );
 				topRightCoordinates = new Vector2 ( 392000,3172000 );
 
-				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.LA_PALMA;
-				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.GRAN_CANARIA;
+				leftPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.LA_PALMA );
+				rightPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.GRAN_CANARIA );
 			break;
 			case Island.LA_PALMA:
 				bottomLeftCoordinates = new Vector2 ( 192500,3145000 );
 				topRightCoordinates = new Vector2 ( 247500,3200000 );
 
-				leftPortal.GetComponentInChildren<Portal>().dstIsland = Island.GRAN_CANARIA;
-				rightPortal.GetComponentInChildren<Portal>().dstIsland = Island.TENERIFE;
+				leftPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.GRAN_CANARIA );
+				rightPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.TENERIFE );
 			break;
 		}
 		
