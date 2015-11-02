@@ -115,7 +115,6 @@ public class QuadtreeLODNode {
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
-		Debug.Log ( "Child dimensions: " + Vector3.Scale( mesh_.bounds.size, transform_.lossyScale ) );
 	}
 
 
