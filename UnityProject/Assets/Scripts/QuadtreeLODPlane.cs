@@ -42,4 +42,15 @@ public class QuadtreeLODPlane : MonoBehaviour {
 			rootNode.Update ();
 		}
 	}
+
+
+	public float GetHeight( Vector3 observer )
+	{
+		float height;
+		if (rootNode != null && rootNode.ObserverOnSector (observer, out height)) {
+			return height;
+		} else {
+			return observer.y;
+		}
+	}
 }

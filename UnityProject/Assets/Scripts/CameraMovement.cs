@@ -12,6 +12,7 @@ public class CameraMovement : MonoBehaviour {
 	const float MAX_SPEED = 5.0f;
 	const float MIN_SPEED = -5.0f;
 	const float SPEED_STEP = 0.5f;
+	public GameObject mapPlane;
 
 
 	void Awake(){
@@ -78,9 +79,11 @@ public class CameraMovement : MonoBehaviour {
 			}
 		}
 
+		float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
+
 		// Move the player forward with the given speed.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       (speed * Time.fixedDeltaTime * Vector3.forward));
+		                                       ( speed * 0.15f * height * Time.fixedDeltaTime * Vector3.forward));
 	}
 
 

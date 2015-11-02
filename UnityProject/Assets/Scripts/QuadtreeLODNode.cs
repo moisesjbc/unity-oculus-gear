@@ -109,6 +109,7 @@ public class QuadtreeLODNode {
 		Vector2 mapSizeVector = new Vector2( mapSize, mapSize );
 
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
+		Debug.Log ( "Child dimensions: " + Vector3.Scale( mesh_.bounds.size, transform_.lossyScale ) );
 	}
 
 
@@ -358,4 +359,48 @@ public class QuadtreeLODNode {
 		// Add a collider to the node.
 		gameObject_.AddComponent<MeshCollider>();
 	}
+
+
+	public bool ObserverOnSector( Vector3 observer, out float observerHeight )
+	{
+		if (visible_) {
+			// Compute if the XZ rect of the map sector contains the observer.
+			Vector3 sectorSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
+
+			Rect sectorRect = new Rect (
+				transform_.position.x - sectorSize.x / 2.0f,
+				transform_.position.z - sectorSize.z / 2.0f,
+				sectorSize.x,
+				sectorSize.z
+			);
+			//Debug.Log ( "sectorRect: " + sectorRect );
+
+			if (sectorRect.Contains (new Vector2 (observer.x, observer.z))) {
+				MeshCollider mapCollider = gameObject_.GetComponent<MeshCollider> ();
+				if (mapCollider != null) {
+					Ray ray = new Ray (observer, Vector3.down);
+					RaycastHit hit;
+				
+					if (mapCollider.Raycast (ray, out hit, 100.0f)) {
+						observerHeight = observer.y - hit.point.y;
+						return true;
+					}
+				}
+			}
+		} else {
+			if (AreChildrenLoaded ()) {
+				for (int i=0; i<children_.Length; i++) {
+					float heightOnChildren;
+					if (children_ [i].ObserverOnSector (observer, out heightOnChildren)) {
+						observerHeight = heightOnChildren;
+						return true;
+					}
+				}
+			}
+		}
+
+		observerHeight = -1.0f;
+		return false;
+	}
+
 }

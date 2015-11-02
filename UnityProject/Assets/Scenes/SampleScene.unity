@@ -701,6 +701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b455d3ac977792b49ace356767c6bb65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapPlane: {fileID: 1768836638}
 --- !u!54 &873849520
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1064,6 +1065,10 @@ MonoBehaviour:
   initialIsland: 0
   leftPortal: {fileID: 740603666}
   rightPortal: {fileID: 1930092595}
+--- !u!1 &1768836638 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 189582, guid: 29411133347733f45b9cccf9df3f3cc2, type: 2}
+  m_PrefabInternal: {fileID: 1848998266}
 --- !u!1 &1777350398
 GameObject:
   m_ObjectHideFlags: 0
