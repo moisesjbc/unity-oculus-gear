@@ -27,6 +27,8 @@ public class QuadtreeLODNode {
 	WWW heightMapRequest = null;
 	bool heightMapLoaded = false;
 
+	float metersPerUnit = 0.0f;
+
 	static GameObject emptyGameObject = new GameObject();
 
 	public QuadtreeLODNode( float meshSize, 
@@ -59,6 +61,9 @@ public class QuadtreeLODNode {
 		
 		bottomLeftCoordinates_ = bottomLeftCoordinates;
 		topRightCoordinates_ = topLeftCoordinates;
+
+		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
+		Debug.Log ("metersPerUnit: " + metersPerUnit);
 
 		LoadMap ();
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
@@ -107,6 +112,8 @@ public class QuadtreeLODNode {
 
 		float mapSize = topRightCoordinates_.x - bottomLeftCoordinates_.x;
 		Vector2 mapSizeVector = new Vector2( mapSize, mapSize );
+
+		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
 		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 		Debug.Log ( "Child dimensions: " + Vector3.Scale( mesh_.bounds.size, transform_.lossyScale ) );
@@ -339,7 +346,6 @@ public class QuadtreeLODNode {
 
 	private void SetHeightsMap( float[,] heights )
 	{
-		float HEIGHT_DIVISOR = 1000.0f * (10.0f / mesh_.bounds.size.x);
 		Vector3[] vertices = mesh_.vertices;
 		
 		int N_ROWS = heights.GetLength(0);
@@ -348,7 +354,7 @@ public class QuadtreeLODNode {
 			int N_COLUMNS = N_ROWS;
 			for (int column=0; column<N_COLUMNS; column++) {
 				int VERTEX_INDEX = row * N_COLUMNS + column;
-				vertices[VERTEX_INDEX].y = heights[row,column] / HEIGHT_DIVISOR;
+				vertices[VERTEX_INDEX].y = heights[row,column] / (metersPerUnit / 2.0f);
 			}
 		}
 		
