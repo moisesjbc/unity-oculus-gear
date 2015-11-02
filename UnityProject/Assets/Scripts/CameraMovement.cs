@@ -41,7 +41,7 @@ public class CameraMovement : MonoBehaviour {
 	void FixedUpdate () {
 		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
 		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
-		const float VR_VELOCITY_HEIGHT_FACTOR = 0.001f;
+		const float SPEED_HEIGHT_FACTOR = 0.2f;
 		
 		if (VRSettings.enabled) {
 			// Increase or decrease speed with Oculus touchpad.
@@ -83,7 +83,7 @@ public class CameraMovement : MonoBehaviour {
 
 		// Move the player forward with the given speed.
 		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       ( speed * 0.15f * height * Time.fixedDeltaTime * Vector3.forward));
+		                                       ( speed * SPEED_HEIGHT_FACTOR * height * Time.fixedDeltaTime * Vector3.forward));
 	}
 
 
