@@ -193,13 +193,15 @@ public class QuadtreeLODNode {
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
 
-		WWW heightMapRequest = heightMapsManager.GetRequest (heightMapRequestId);
-		if (!heightMapLoaded && heightMapRequest.isDone) {
-			heightMapLoaded = true;
-			if( depth_ == 0 ){
-				SetHeightsMap( GetHeightsMatrix( heightMapRequest.text ) );
-			}else{
-				SetHeightsMap( GetSubMatrix( GetHeightsMatrix( heightMapRequest.text ), meshVertexResolution_ - 1, meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1 ) );
+		if (!heightMapLoaded) {
+			float[,] heightMatrix = heightMapsManager.GetHeightMatrix( heightMapRequestId );
+			if( heightMatrix != null ){
+				heightMapLoaded = true;
+				if( depth_ == 0 ){
+					SetHeightsMap( heightMatrix );
+				}else{
+					SetHeightsMap( GetSubMatrix( heightMatrix, meshVertexResolution_ - 1, meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1 ) );
+				}
 			}
 		}
 	}
@@ -306,27 +308,6 @@ public class QuadtreeLODNode {
 		} else {
 			return false;
 		}
-	}
-
-
-	private float[,] GetHeightsMatrix( string heightMapSpec ){
-		string[] specLines = heightMapSpec.Split ('\n');
-		const int HEIGHTS_START_LINE = 6;
-		int N_COLUMNS = int.Parse ( specLines [0].Split (new string[]{" "}, System.StringSplitOptions.RemoveEmptyEntries) [1] );
-		int N_ROWS = int.Parse ( specLines [1].Split (new string[]{" "}, System.StringSplitOptions.RemoveEmptyEntries) [1] );
-
-		float[,] heightsMatrix = new float[N_ROWS,N_COLUMNS];
-		
-		for (int i=0; i<N_ROWS; i++) {
-			string[] heightsStrLine = specLines[HEIGHTS_START_LINE+i].Split (' ');
-			
-			for(int j=0; j<N_COLUMNS; j++){
-				heightsMatrix[i,j] = float.Parse ( heightsStrLine[j] );
-				heightsMatrix[i,j] = Mathf.Max( heightsMatrix[i,j], 0.0f );
-			}
-		}
-		
-		return heightsMatrix;
 	}
 
 
