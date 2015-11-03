@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class HeightMapsManager 
 {
@@ -48,6 +49,12 @@ public class HeightMapsManager
 
 	public WWW GetRequest(string id)
 	{
+		if ( requests_ [id].isDone ){
+			StreamWriter file = new StreamWriter( Application.persistentDataPath + "/" + id );
+			file.Write ( requests_ [id].text );
+			file.Close();
+		}
+
 		return requests_[id];
 	}
 }
