@@ -72,6 +72,7 @@ public class LevelManagement : MonoBehaviour {
 		
 		scoreText = GameObject.Find ("ScoreText").GetComponent<UnityEngine.UI.Text> ();
 		pickupsCollector = gameObject.GetComponentInChildren<PickupCollection> ();
+		pickupsCollector.Reset ();
 		
 		foreach( QuadtreeLODPlane map in maps ){
 			map.Reset( bottomLeftCoordinates, topRightCoordinates );
@@ -82,6 +83,6 @@ public class LevelManagement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		scoreText.text = "Score: " + pickupsCollector.score + " / " + pickupPositions.Count.ToString();
+		scoreText.text = "Score: " + pickupsCollector.Score() + " / " + pickupPositions.Count.ToString();
 	}
 }
