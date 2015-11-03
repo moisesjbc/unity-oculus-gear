@@ -141,8 +141,9 @@ public class QuadtreeLODNode {
 			collider.enabled = visible;
 		}
 
-		// Apply visibility change to children (only if v = false).
-		if (visible_ == false && children_[0] != null) {
+		// No matter which visibility is applied to this node, children
+		// visibility must be set to false.
+		if (children_[0] != null) {
 			for( int i = 0; i < children_.Length; i++ ){
 				children_[i].SetVisible (false);
 			}
