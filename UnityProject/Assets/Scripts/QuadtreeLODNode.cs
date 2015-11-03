@@ -28,6 +28,7 @@ public class QuadtreeLODNode {
 	float metersPerUnit = 0.0f;
 
 	static GameObject emptyGameObject = new GameObject();
+	private static HeightMapsManager heightMapsManager = new HeightMapsManager();
 
 
 	public QuadtreeLODNode( float meshSize, 
@@ -65,7 +66,7 @@ public class QuadtreeLODNode {
 		Debug.Log ("metersPerUnit: " + metersPerUnit);
 
 		LoadMap ();
-		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
+		heightMapRequest = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
 	}
 
 
@@ -114,7 +115,7 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
-		heightMapRequest = RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
+		heightMapRequest = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
 
@@ -290,28 +291,6 @@ public class QuadtreeLODNode {
 				topRightCoordinates_.y;
 		string url = fixedUrl + bboxUrlQuery;
 		wwwService_ = new WWW(url);
-	}
-
-
-	private static WWW RequestHeightMap( 
-	                                    Vector2 bottomLeftCoordinates, 
-	                                    Vector2 topRightCoordinates,
-	                                    int N ){
-		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
-		string bboxUrlQuery = 
-			"&BBOX=" + bottomLeftCoordinates.x + "," +
-			bottomLeftCoordinates.y + "," +
-			topRightCoordinates.x + "," +
-			topRightCoordinates.y;
-		string dimensionsUrlQuery =
-			"&WIDTH=" + N +
-			"&HEIGHT=" + N;
-
-		string url = fixedUrl + bboxUrlQuery + dimensionsUrlQuery;
-
-		Debug.Log ("heightMap URL - " + url);
-
-		return new WWW( url );
 	}
 
 
