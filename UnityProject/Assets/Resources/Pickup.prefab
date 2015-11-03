@@ -14,7 +14,7 @@ GameObject:
   - 114: {fileID: 11475704}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Pickup
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,7 +47,7 @@ GameObject:
   - 114: {fileID: 11433262}
   m_Layer: 0
   m_Name: Pickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,7 +90,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.0072632, y: 103.208702, z: -24.9907341}
+  m_LocalPosition: {x: 490.416473, y: 29.3064365, z: 75.2710495}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 450720}
