@@ -211,7 +211,7 @@ public class QuadtreeLODNode {
 
 	private DistanceTestResult DoDistanceTest()
 	{
-		const float THRESHOLD_FACTOR = 2.0f;
+		const float THRESHOLD_FACTOR = 2.5f;
 
 		Vector3 cameraPos = Camera.main.transform.position;
 		float distanceCameraBorder = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.ClosestPoint (cameraPos));
