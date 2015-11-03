@@ -8,7 +8,7 @@ public class PickupCollection : MonoBehaviour {
 	void OnTriggerEnter( Collider other )
 	{
 		if (other.gameObject.tag == "Pickup") {
-			Destroy (other.gameObject);
+			Destroy (other.transform.parent.gameObject);
 			score++;
 			Debug.Log ("Pickup!");
 		}
