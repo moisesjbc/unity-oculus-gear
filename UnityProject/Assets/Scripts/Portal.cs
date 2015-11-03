@@ -5,11 +5,6 @@ public class Portal : MonoBehaviour {
 
 	private LevelManagement.Island dstIsland_;
 
-	public void Awake()
-	{
-		SetDstIsland ( LevelManagement.Island.GRAN_CANARIA );
-	}
-
 
 	public void SetDstIsland( LevelManagement.Island dstIsland )
 	{
