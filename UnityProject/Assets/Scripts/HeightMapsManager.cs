@@ -47,10 +47,16 @@ public class HeightMapsManager
 	}
 
 
+	private string FilePath( string id )
+	{
+		return Application.persistentDataPath + "/" + id;
+	}
+
+
 	public WWW GetRequest(string id)
 	{
 		if ( requests_ [id].isDone ){
-			StreamWriter file = new StreamWriter( Application.persistentDataPath + "/" + id );
+			StreamWriter file = new StreamWriter( FilePath( id ) );
 			file.Write ( requests_ [id].text );
 			file.Close();
 		}
