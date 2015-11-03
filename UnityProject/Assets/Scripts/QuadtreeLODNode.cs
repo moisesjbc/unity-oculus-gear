@@ -153,32 +153,24 @@ public class QuadtreeLODNode {
 	public void Update()
 	{
 		if (visible_ || AreChildrenLoaded()) {
-			const float THRESHOLD_FACTOR = 3.0f;
-			
-			Vector3 cameraPos = Camera.main.transform.position;
-			float distanceCameraBorder = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.ClosestPoint (cameraPos));
-			float distanceCameraCenter = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.center);
-			float radius = Mathf.Abs ( distanceCameraCenter - distanceCameraBorder );
+			DistanceTestResult distanceTestResult = DoDistanceTest();
+			Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
 
 			// Subdivide the plane if camera is closer than a threshold.
-			if (visible_) {
-				Vector3 meshSize = Vector3.Scale (mesh_.bounds.size, transform_.lossyScale);
-
-				if (distanceCameraBorder < THRESHOLD_FACTOR * radius) {
-					// Create children if they don't exist.
-					if (depth_ < MAX_DEPTH && children_ [0] == null) {
-						CreateChildren (meshSize);
-					}
-				
-					// Make this node invisible and children visible.
-					if (AreChildrenLoaded ()) {
-						SetVisible (false);
-						for (int i = 0; i < children_.Length; i++) {
-							children_ [i].SetVisible (true);
-						}
+			if (visible_ && distanceTestResult == DistanceTestResult.SUBDIVIDE ) {
+				// Create children if they don't exist.
+				if (depth_ < MAX_DEPTH && children_ [0] == null) {
+					CreateChildren (meshSize);
+				}
+			
+				// Make this node invisible and children visible.
+				if (AreChildrenLoaded ()) {
+					SetVisible (false);
+					for (int i = 0; i < children_.Length; i++) {
+						children_ [i].SetVisible (true);
 					}
 				}
-			} else if (AreChildrenLoaded () && distanceCameraBorder >= THRESHOLD_FACTOR * radius ) {
+			} else if (AreChildrenLoaded () && distanceTestResult == DistanceTestResult.JOIN ) {
 				SetVisible (true);
 				for (int i = 0; i < children_.Length; i++) {
 					children_ [i].SetVisible (false);
@@ -207,6 +199,31 @@ public class QuadtreeLODNode {
 				SetHeightsMap( GetSubMatrix( GetHeightsMatrix( heightMapRequest.text ), meshVertexResolution_ - 1, meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1, 2 * meshVertexResolution_ - 1 ) );
 			}
 		}
+	}
+
+	enum DistanceTestResult 
+	{
+		DO_NOTHING,
+		SUBDIVIDE,
+		JOIN
+	}
+
+	private DistanceTestResult DoDistanceTest()
+	{
+		const float THRESHOLD_FACTOR = 4.0f;
+
+		Vector3 cameraPos = Camera.main.transform.position;
+		float distanceCameraBorder = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.ClosestPoint (cameraPos));
+		float distanceCameraCenter = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.center);
+		float radius = Mathf.Abs ( distanceCameraCenter - distanceCameraBorder );
+
+		if (distanceCameraBorder < THRESHOLD_FACTOR * radius) {
+			return DistanceTestResult.SUBDIVIDE;
+		} else if (distanceCameraBorder >= THRESHOLD_FACTOR * radius) {
+			return DistanceTestResult.JOIN;
+		}
+
+		return DistanceTestResult.DO_NOTHING;
 	}
 
 
