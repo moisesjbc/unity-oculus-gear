@@ -151,7 +151,7 @@ public class QuadtreeLODNode {
 	}
 
 
-	public void Update()
+	public void Update( bool existsVisibleAncestor )
 	{
 		if (visible_ || AreChildrenLoaded()) {
 			DistanceTestResult distanceTestResult = DoDistanceTest();
@@ -171,7 +171,7 @@ public class QuadtreeLODNode {
 						children_ [i].SetVisible (true);
 					}
 				}
-			} else if (AreChildrenLoaded () && distanceTestResult == DistanceTestResult.JOIN ) {
+			}else if ( !existsVisibleAncestor && !visible_ && AreChildrenLoaded () && distanceTestResult == DistanceTestResult.JOIN ) {
 				SetVisible (true);
 				for (int i = 0; i < children_.Length; i++) {
 					children_ [i].SetVisible (false);
@@ -182,7 +182,7 @@ public class QuadtreeLODNode {
 		// Update children.
 		if (children_ [0] != null) {
 			for (int i=0; i<4; i++) {
-				children_ [i].Update ();
+				children_ [i].Update ( existsVisibleAncestor | visible_ );
 			}
 		}
 

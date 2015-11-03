@@ -39,7 +39,7 @@ public class QuadtreeLODPlane : MonoBehaviour {
 
 	void Update () {
 		if (rootNode != null) {
-			rootNode.Update ();
+			rootNode.Update ( false );
 		}
 	}
 
