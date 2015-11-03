@@ -22,7 +22,7 @@ public class QuadtreeLODNode {
 	WWW wwwService_ = null;
 	bool textureLoaded = false;
 
-	WWW heightMapRequest = null;
+	string heightMapRequestId;
 	bool heightMapLoaded = false;
 
 	float metersPerUnit = 0.0f;
@@ -66,7 +66,7 @@ public class QuadtreeLODNode {
 		Debug.Log ("metersPerUnit: " + metersPerUnit);
 
 		LoadMap ();
-		heightMapRequest = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
+		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
 	}
 
 
@@ -115,7 +115,7 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
-		heightMapRequest = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
+		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
 
@@ -193,6 +193,7 @@ public class QuadtreeLODNode {
 			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
 		}
 
+		WWW heightMapRequest = heightMapsManager.GetRequest (heightMapRequestId);
 		if (!heightMapLoaded && heightMapRequest.isDone) {
 			heightMapLoaded = true;
 			if( depth_ == 0 ){
