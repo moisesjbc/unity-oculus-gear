@@ -23,4 +23,16 @@ public class HeightMapsManager
 		
 		return new WWW( url );
 	}
+
+
+	private string GenerateID( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int N )
+	{
+		return 
+			"heightmap-" + 
+			bottomLeftCoordinates.x + "-" + 
+			bottomLeftCoordinates.y + "-" +
+			topRightCoordinates.x + "-" + 
+			topRightCoordinates.y + "-" +
+			N;
+	}
 }
