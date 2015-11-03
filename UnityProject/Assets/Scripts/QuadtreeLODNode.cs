@@ -215,8 +215,8 @@ public class QuadtreeLODNode {
 
 		Vector3 cameraPos = Camera.main.transform.position;
 		float distanceCameraBorder = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.ClosestPoint (cameraPos));
-		float distanceCameraCenter = Vector3.Distance (cameraPos, gameObject_.GetComponent<MeshRenderer> ().bounds.center);
-		float radius = Mathf.Abs ( distanceCameraCenter - distanceCameraBorder );
+		Vector3 boundsSize = gameObject_.GetComponent<MeshRenderer> ().bounds.size;
+		float radius = (boundsSize.x + boundsSize.y + boundsSize.z) / 3.0f;
 
 		if (distanceCameraBorder < THRESHOLD_FACTOR * radius) {
 			return DistanceTestResult.SUBDIVIDE;
