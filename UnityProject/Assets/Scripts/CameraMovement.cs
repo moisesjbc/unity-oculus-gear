@@ -39,8 +39,6 @@ public class CameraMovement : MonoBehaviour {
 
 
 	void FixedUpdate () {
-		const float NO_VR_MOVEMENT_HEIGHT_FACTOR = 0.05f;
-		const float NO_VR_ZOOM_HEIGHT_FACTOR = 0.30f;
 		const float SPEED_HEIGHT_FACTOR = 0.2f;
 		
 		if (VRSettings.enabled) {
