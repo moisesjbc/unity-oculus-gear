@@ -44,6 +44,14 @@ public class LevelManagement : MonoBehaviour {
 				pickupPositions.Add( new Vector3( 0f, 3f, -15f ) );
 				pickupPositions.Add( new Vector3( -3.6f, 5.2f, 5f ) );
 
+				pickupPositions.Add( new Vector3( -12.8f, 0.7f, -8.9f ) );
+				pickupPositions.Add( new Vector3( -13.0f, 0.7f, -9.3f ) );
+				pickupPositions.Add( new Vector3( -13.4f, 0.65f, -10.3f ) );
+				pickupPositions.Add( new Vector3( -12.2f, 1.1f, -7.96f ) );
+				pickupPositions.Add( new Vector3( -10.2f, 1.1f, -6.6f ) );
+				pickupPositions.Add( new Vector3( -10.28f, 1.1f, -5.54f ) );
+				pickupPositions.Add( new Vector3( -9.1f, 2.18f, -3.84f ) );
+
 				leftPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.TENERIFE );
 				rightPortal.GetComponentInChildren<Portal>().SetDstIsland( Island.LA_PALMA );
 			break;
