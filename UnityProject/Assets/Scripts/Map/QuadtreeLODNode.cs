@@ -19,7 +19,7 @@ public class QuadtreeLODNode {
 	private int depth_ = 0;
 	const int MAX_DEPTH = 7;
 
-	WWW wwwService_ = null;
+	string textureRequestId;
 	bool textureLoaded = false;
 
 	string heightMapRequestId;
@@ -29,6 +29,7 @@ public class QuadtreeLODNode {
 
 	static GameObject emptyGameObject = new GameObject();
 	private static HeightMapsManager heightMapsManager = new HeightMapsManager();
+	private static MapTexturesManager mapTexturesManager = new MapTexturesManager();
 
 
 	public QuadtreeLODNode( float meshSize, 
@@ -64,8 +65,8 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 		Debug.Log ("metersPerUnit: " + metersPerUnit);
-
-		LoadMap ();
+		
+		textureRequestId = mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
 		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
 	}
 
@@ -106,8 +107,6 @@ public class QuadtreeLODNode {
 		bottomLeftCoordinates_ = bottomLeftCoordinates;
 		topRightCoordinates_ = topRightCoordinates;
 		
-		LoadMap ();
-
 		children_ = new QuadtreeLODNode[]{ null, null, null, null };
 
 		float mapSize = topRightCoordinates_.x - bottomLeftCoordinates_.x;
@@ -115,6 +114,7 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
+		textureRequestId = mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
 		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
@@ -187,10 +187,13 @@ public class QuadtreeLODNode {
 			}
 		}
 
-		if ( !textureLoaded && wwwService_.isDone) {
-			textureLoaded = true;
-			material_.mainTexture = wwwService_.texture;
-			material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
+		if (!textureLoaded) {
+			Texture2D texture = mapTexturesManager.GetTexture (textureRequestId);
+			if (texture != null) {
+				textureLoaded = true;
+				material_.mainTexture = texture;
+				material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
+			}
 		}
 
 		if (!heightMapLoaded) {
@@ -282,18 +285,6 @@ public class QuadtreeLODNode {
 		for( int i=0; i<4; i++ ){
 			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
 		}
-	}
-
-
-	private void LoadMap() {
-		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=128&HEIGHT=128&REFERER=CAPAWARE";
-		string bboxUrlQuery = 
-			"&BBOX=" + bottomLeftCoordinates_.x + "," +
-				bottomLeftCoordinates_.y + "," +
-			topRightCoordinates_.x + "," +
-				topRightCoordinates_.y;
-		string url = fixedUrl + bboxUrlQuery;
-		wwwService_ = new WWW(url);
 	}
 
 
