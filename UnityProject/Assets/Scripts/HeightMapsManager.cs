@@ -3,17 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class HeightMapsManager 
+public class HeightMapsManager : OnlineResourcesManager
 {
-	Dictionary<string,WWW> requests_ = new Dictionary<string,WWW>();
-
 	public string RequestHeightMap( 
 	                            Vector2 bottomLeftCoordinates, 
 	                            Vector2 topRightCoordinates,
 	                            int N ){
 		string newId = GenerateID (bottomLeftCoordinates, topRightCoordinates, N);
 		
-		if (!File.Exists (FilePath (newId)) && !requests_.ContainsKey (newId)) {
+		if ( ResourceNotRequested( newId ) ) {
 			string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 			string bboxUrlQuery = 
 			"&BBOX=" + bottomLeftCoordinates.x + "," +
@@ -39,7 +37,7 @@ public class HeightMapsManager
 	}
 
 
-	private string GenerateID( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int N )
+	protected string GenerateID( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int N )
 	{
 		return 
 			"heightmap-" + 
@@ -48,12 +46,6 @@ public class HeightMapsManager
 			topRightCoordinates.x + "-" + 
 			topRightCoordinates.y + "-" +
 			N;
-	}
-
-
-	private string FilePath( string id )
-	{
-		return Application.persistentDataPath + "/" + id;
 	}
 
 
