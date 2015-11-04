@@ -80,14 +80,14 @@ public class CameraMovement : MonoBehaviour {
 
 		
 		// Compute velocity vector.
-		Vector3 velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Time.fixedDeltaTime * Vector3.forward);
+		Vector3 velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Vector3.forward);
 		if (SPEED_DEPENDS_ON_HEIGHT) {
 			float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
 			velocity *= SPEED_HEIGHT_FACTOR * height;
 		}
 
 		// Move the player forward with the given speed.
-		GetComponent<Rigidbody>().MovePosition(transform.position + velocity);
+		GetComponent<Rigidbody> ().velocity = velocity;
 	}
 
 
