@@ -14,6 +14,7 @@ public class CameraMovement : MonoBehaviour {
 	public float SPEED_STEP = 0.5f;
 	public bool SPEED_DEPENDS_ON_HEIGHT = true;
 	public GameObject mapPlane;
+	Vector3 velocity;
 
 
 	void Awake(){
@@ -40,7 +41,7 @@ public class CameraMovement : MonoBehaviour {
 
 
 	void FixedUpdate () {
-		const float SPEED_HEIGHT_FACTOR = 0.2f;
+		const float SPEED_HEIGHT_FACTOR = 0.3f;
 		
 		if (VRSettings.enabled) {
 			// Increase or decrease speed with Oculus touchpad.
@@ -80,14 +81,15 @@ public class CameraMovement : MonoBehaviour {
 
 		
 		// Compute velocity vector.
-		Vector3 velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Vector3.forward);
+		velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Vector3.forward);
+
 		if (SPEED_DEPENDS_ON_HEIGHT) {
 			float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
-			velocity *= SPEED_HEIGHT_FACTOR * height;
+			velocity *= SPEED_HEIGHT_FACTOR * Mathf.Max ( height, 1.5f );
 		}
 
 		// Move the player forward with the given speed.
-		GetComponent<Rigidbody> ().velocity = velocity;
+		GetComponent<Rigidbody> ().MovePosition( transform.position + velocity * Time.fixedDeltaTime );
 	}
 
 
