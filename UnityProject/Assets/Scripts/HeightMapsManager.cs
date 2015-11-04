@@ -9,29 +9,32 @@ public class HeightMapsManager : OnlineResourcesManager
 	                            Vector2 bottomLeftCoordinates, 
 	                            Vector2 topRightCoordinates,
 	                            int N ){
+
 		string newId = GenerateID (bottomLeftCoordinates, topRightCoordinates, N);
-		
-		if ( ResourceNotRequested( newId ) ) {
-			string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
-			string bboxUrlQuery = 
-			"&BBOX=" + bottomLeftCoordinates.x + "," +
-				bottomLeftCoordinates.y + "," +
-				topRightCoordinates.x + "," +
-				topRightCoordinates.y;
-			string dimensionsUrlQuery =
-			"&WIDTH=" + N +
-				"&HEIGHT=" + N;
-		
-			string url = fixedUrl + bboxUrlQuery + dimensionsUrlQuery;
-		
-			Debug.Log ("heightMap URL - " + url);
 
-			requests_ [newId] = new WWW (url);
-
-			Debug.LogFormat ("Requesting height map with id [{0}] - NOT cached", newId);
-		} else {
+#if CACHE_RESOURCES
+		if ( !ResourceNotRequested( newId ) ){
 			Debug.LogFormat ("Requesting height map with id [{0}] - Cached!", newId);
+			return newId;
 		}
+#endif
+		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
+		string bboxUrlQuery = 
+		"&BBOX=" + bottomLeftCoordinates.x + "," +
+			bottomLeftCoordinates.y + "," +
+			topRightCoordinates.x + "," +
+			topRightCoordinates.y;
+		string dimensionsUrlQuery =
+		"&WIDTH=" + N +
+			"&HEIGHT=" + N;
+	
+		string url = fixedUrl + bboxUrlQuery + dimensionsUrlQuery;
+	
+		Debug.Log ("heightMap URL - " + url);
+
+		requests_ [newId] = new WWW (url);
+
+		Debug.LogFormat ("Requesting height map with id [{0}] - NOT cached", newId);
 
 		return newId;
 	}
@@ -52,29 +55,50 @@ public class HeightMapsManager : OnlineResourcesManager
 	public float[,] GetHeightMatrix( string id )
 	{
 		string heightMapSpec = null;
+
+#if CACHE_RESOURCES
 		// Check if we have a finished request with the same ID
 		// and save the result to a file.
-		if ( requests_.ContainsKey(id) && requests_ [id].isDone ){
-			StreamWriter outFile = new StreamWriter( FilePath( id ) );
+		if (requests_.ContainsKey (id) && requests_ [id].isDone) {
+			StreamWriter outFile = new StreamWriter (FilePath (id));
 			heightMapSpec = requests_ [id].text;
-			outFile.Write ( heightMapSpec );
-			outFile.Close();
+			outFile.Write (heightMapSpec);
+			outFile.Close ();
 		}
-
+		
 		// If the request hasn't finished, the file won't exist
 		// yet.
-		if( !File.Exists ( FilePath( id ) ) ){
+		if (!File.Exists (FilePath (id))) {
 			return null;
 		}
-
+		
 		// The result file for the requested ID, exists. Parse
 		// its contents and return the height matrix.
 		if (heightMapSpec == null) {
-			StreamReader inFile = new StreamReader( FilePath ( id ) );
-			heightMapSpec = inFile.ReadToEnd();
+			StreamReader inFile = new StreamReader (FilePath (id));
+			heightMapSpec = inFile.ReadToEnd ();
+			return ParseHeightMatrix (heightMapSpec);
 		}
 		
-		return ParseHeightMatrix( heightMapSpec );
+		if (heightMapSpec != null) {
+			return ParseHeightMatrix (heightMapSpec);
+		} else {
+			return null;
+		}
+#else
+		// Check if we have a finished request with the same ID
+		// and save the result to a file.
+		if ( requests_.ContainsKey(id) && requests_ [id].isDone ){
+			//StreamWriter outFile = new StreamWriter( FilePath( id ) );
+			heightMapSpec = requests_ [id].text;
+		}
+		
+		if (heightMapSpec != null) {
+			return ParseHeightMatrix (heightMapSpec);
+		} else {
+			return null;
+		}
+#endif
 	}
 
 
