@@ -15,3 +15,7 @@ This is a toy project for testing [Unity 3d](https://unity3d.com) development fo
 5. Plug your Samsung to the computer.
 6. On Unity, set Android as the target platform.
 7. Build the Unity project and enjoy!.
+
+## Third-party work
+
+- The sound "pickup" has been downloaded from www.freesound.org on [this link](https://www.freesound.org/people/soundnimja/sounds/173324/). This sound was made by user *soundnimja* and licensed under [the Creative Commons 0 License](http://creativecommons.org/publicdomain/zero/1.0/).

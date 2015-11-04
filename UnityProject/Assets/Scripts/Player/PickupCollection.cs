@@ -21,6 +21,7 @@ public class PickupCollection : MonoBehaviour {
 	public void OnTriggerEnter( Collider other )
 	{
 		if (other.gameObject.tag == "Pickup") {
+			gameObject.GetComponent<AudioSource>().Play ();
 			Destroy (other.transform.parent.gameObject);
 			score++;
 			Debug.Log ("Pickup!");
