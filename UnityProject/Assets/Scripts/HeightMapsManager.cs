@@ -51,11 +51,13 @@ public class HeightMapsManager : OnlineResourcesManager
 
 	public float[,] GetHeightMatrix( string id )
 	{
+		string heightMapSpec = null;
 		// Check if we have a finished request with the same ID
 		// and save the result to a file.
 		if ( requests_.ContainsKey(id) && requests_ [id].isDone ){
 			StreamWriter outFile = new StreamWriter( FilePath( id ) );
-			outFile.Write ( requests_ [id].text );
+			heightMapSpec = requests_ [id].text;
+			outFile.Write ( heightMapSpec );
 			outFile.Close();
 		}
 
@@ -67,9 +69,12 @@ public class HeightMapsManager : OnlineResourcesManager
 
 		// The result file for the requested ID, exists. Parse
 		// its contents and return the height matrix.
-		StreamReader inFile = new StreamReader( FilePath ( id ) );
-		string fileContents = inFile.ReadToEnd();
-		return ParseHeightMatrix( fileContents );
+		if (heightMapSpec == null) {
+			StreamReader inFile = new StreamReader( FilePath ( id ) );
+			heightMapSpec = inFile.ReadToEnd();
+		}
+		
+		return ParseHeightMatrix( heightMapSpec );
 	}
 
 
