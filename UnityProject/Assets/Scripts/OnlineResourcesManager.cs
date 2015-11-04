@@ -1,4 +1,5 @@
 ﻿//#define CACHE_RESOURCES
+//FIXME: Caching not working.
 
 using UnityEngine;
 using System.Collections;
