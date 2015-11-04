@@ -12,6 +12,7 @@ public class CameraMovement : MonoBehaviour {
 	public float MAX_SPEED = 5.0f;
 	public float MIN_SPEED = -5.0f;
 	public float SPEED_STEP = 0.5f;
+	public bool SPEED_DEPENDS_ON_HEIGHT = true;
 	public GameObject mapPlane;
 
 
@@ -77,11 +78,16 @@ public class CameraMovement : MonoBehaviour {
 			}
 		}
 
-		float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
+		
+		// Compute velocity vector.
+		Vector3 velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Time.fixedDeltaTime * Vector3.forward);
+		if (SPEED_DEPENDS_ON_HEIGHT) {
+			float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
+			velocity *= SPEED_HEIGHT_FACTOR * height;
+		}
 
 		// Move the player forward with the given speed.
-		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       ( speed * SPEED_HEIGHT_FACTOR * height * Time.fixedDeltaTime * Vector3.forward));
+		GetComponent<Rigidbody>().MovePosition(transform.position + velocity);
 	}
 
 

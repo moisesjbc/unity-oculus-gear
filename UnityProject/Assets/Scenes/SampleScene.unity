@@ -704,6 +704,7 @@ MonoBehaviour:
   MAX_SPEED: 5
   MIN_SPEED: -5
   SPEED_STEP: .5
+  SPEED_DEPENDS_ON_HEIGHT: 1
   mapPlane: {fileID: 1768836638}
 --- !u!54 &873849520
 Rigidbody:
