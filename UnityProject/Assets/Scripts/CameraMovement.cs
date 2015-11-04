@@ -5,13 +5,14 @@ using UnityEngine.VR;
 
 public class CameraMovement : MonoBehaviour {
 	bool mouseLeftButtonPressed = false;
-	const float INITIAL_SPEED = 0.0f;
+	public const float INITIAL_SPEED = 0.0f;
 	float speed = INITIAL_SPEED;
 	Vector3 initialPosition = Vector3.zero;
 	const float ROTATION_SENSITIVITY = 5.0f;
-	const float MAX_SPEED = 5.0f;
-	const float MIN_SPEED = -5.0f;
-	const float SPEED_STEP = 0.5f;
+	public float MAX_SPEED = 5.0f;
+	public float MIN_SPEED = -5.0f;
+	public float SPEED_STEP = 0.5f;
+	public bool SPEED_DEPENDS_ON_HEIGHT = true;
 	public GameObject mapPlane;
 
 
@@ -77,11 +78,16 @@ public class CameraMovement : MonoBehaviour {
 			}
 		}
 
-		float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
+		
+		// Compute velocity vector.
+		Vector3 velocity = GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * (speed * Time.fixedDeltaTime * Vector3.forward);
+		if (SPEED_DEPENDS_ON_HEIGHT) {
+			float height = mapPlane.GetComponent<QuadtreeLODPlane> ().GetHeight (transform.position);
+			velocity *= SPEED_HEIGHT_FACTOR * height;
+		}
 
 		// Move the player forward with the given speed.
-		GetComponent<Rigidbody>().MovePosition(transform.position + GetComponent<OVRCameraRig> ().centerEyeAnchor.rotation * 
-		                                       ( speed * SPEED_HEIGHT_FACTOR * height * Time.fixedDeltaTime * Vector3.forward));
+		GetComponent<Rigidbody>().MovePosition(transform.position + velocity);
 	}
 
 
