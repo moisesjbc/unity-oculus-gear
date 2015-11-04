@@ -48,7 +48,7 @@ public class LevelManagement : MonoBehaviour {
 				pickupPositions.Add( new Vector3( -13.0f, 0.7f, -9.3f ) );
 				pickupPositions.Add( new Vector3( -13.4f, 0.65f, -10.3f ) );
 				pickupPositions.Add( new Vector3( -12.2f, 1.1f, -7.96f ) );
-				pickupPositions.Add( new Vector3( -10.2f, 1.1f, -6.6f ) );
+				pickupPositions.Add( new Vector3( -10.7f, 1.06f, -6.32f ) );
 				pickupPositions.Add( new Vector3( -10.28f, 1.1f, -5.54f ) );
 				pickupPositions.Add( new Vector3( -9.1f, 2.18f, -3.84f ) );
 
@@ -73,7 +73,7 @@ public class LevelManagement : MonoBehaviour {
 		
 		foreach( Vector3 pickupPosition in pickupPositions )
 		{
-			Instantiate( Resources.Load("Pickup"), pickupPosition, Quaternion.identity );
+			Instantiate( Resources.Load("Allsorts/Prefabs/SingleOrange"), pickupPosition, Quaternion.identity );
 		}
 		
 		QuadtreeLODPlane[] maps = gameObject.GetComponentsInChildren<QuadtreeLODPlane> ();

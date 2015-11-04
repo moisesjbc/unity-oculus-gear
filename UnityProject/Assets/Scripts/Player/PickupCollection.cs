@@ -22,7 +22,7 @@ public class PickupCollection : MonoBehaviour {
 	{
 		if (other.gameObject.tag == "Pickup") {
 			gameObject.GetComponent<AudioSource>().Play ();
-			Destroy (other.transform.parent.gameObject);
+			Destroy (other.gameObject);
 			score++;
 			Debug.Log ("Pickup!");
 		}

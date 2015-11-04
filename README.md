@@ -18,4 +18,5 @@ This is a toy project for testing [Unity 3d](https://unity3d.com) development fo
 
 ## Third-party work
 
+- The "candy" pickups have been downloaded from Unity Store on [this link](https://www.assetstore.unity3d.com/en/#!/content/12512). They have been published by [TOO TIDY STUDIOS](https://www.assetstore.unity3d.com/en/#!/publisher/2555/page=1/sortby=popularity).
 - The sound "pickup" has been downloaded from www.freesound.org on [this link](https://www.freesound.org/people/soundnimja/sounds/173324/). This sound was made by user *soundnimja* and licensed under [the Creative Commons 0 License](http://creativecommons.org/publicdomain/zero/1.0/).
