@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//#define CACHE_RESOURCES
+// Uncomment previous line to activate resources caching.
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +15,20 @@ public class HeightMapsManager : OnlineResourcesManager
 	                            Vector2 topRightCoordinates,
 	                            int N,
 	                            HeightMapCallback callback ){
+		
+		string newId = GenerateID (bottomLeftCoordinates, topRightCoordinates, N);
+
+#if CACHE_RESOURCES
+		if( ResourceAlreadyRequested( newId ) ){
+			Debug.LogFormat ("Requesting heights map: {0} - CACHED", newId);
+			if( File.Exists ( FilePath ( newId ) ) ){
+				callback( ParseHeightMatrix( File.ReadAllText( FilePath ( newId ) ) ) );
+			}else{
+				StartCoroutine( WaitForRequestedHeightMap( newId, callback ) );
+			}
+			return;
+		}
+#endif
 		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
 		string bboxUrlQuery = 
 		"&BBOX=" + bottomLeftCoordinates.x + "," +
@@ -26,17 +43,27 @@ public class HeightMapsManager : OnlineResourcesManager
 	
 		Debug.Log ("heightMap URL - " + url);
 
-		StartCoroutine (RequestURL (url, callback));
+		StartCoroutine (RequestURL (newId, url, callback));
 	}
 
 
-	private IEnumerator RequestURL( string url, HeightMapCallback callback )
+	private IEnumerator RequestURL( string id, string url, HeightMapCallback callback )
 	{
+#if CACHE_RESOURCES
+		requests_[id] = new WWW (url);
+		
+		yield return requests_[id];
+
+		File.WriteAllText ( FilePath( id ), requests_[id].text );
+		
+		callback( ParseHeightMatrix( requests_[id].text ) );
+#else
 		WWW www = new WWW (url);
 		
 		yield return www;
 		
 		callback ( ParseHeightMatrix ( www.text ) );
+#endif
 	}
 
 
@@ -71,4 +98,13 @@ public class HeightMapsManager : OnlineResourcesManager
 		
 		return heightsMatrix;
 	}
+
+
+#if CACHE_RESOURCES
+	private IEnumerator WaitForRequestedHeightMap( string id, HeightMapCallback callback )
+	{
+		yield return requests_[id];
+		callback ( ParseHeightMatrix( requests_[id].text ) );
+	}
+#endif
 }
