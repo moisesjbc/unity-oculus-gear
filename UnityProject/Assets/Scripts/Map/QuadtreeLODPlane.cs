@@ -2,8 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class QuadtreeLODPlane : MonoBehaviour {
+public class QuadtreeLODPlane : MonoBehaviour{
 	private QuadtreeLODNode rootNode = null;
+	HeightMapsManager heightMapsManager = null;
+	MapTexturesManager mapTexturesManager = null;
+
+	public void Awake()
+	{
+		heightMapsManager = gameObject.AddComponent<HeightMapsManager> ();
+		mapTexturesManager = gameObject.AddComponent<MapTexturesManager> ();
+	}
+
 
 	public void Reset( Vector2 bottomLeftCoordinates, Vector3 topRightCoordinates )
 	{
