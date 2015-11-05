@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//#define CACHE_RESOURCES
+// Uncomment previous line to activate resources caching.
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +17,7 @@ public class MapTexturesManager : OnlineResourcesManager
 #if CACHE_RESOURCES
 		if ( !ResourceNotRequested( newId ) ) {
 			Debug.LogFormat ("Requesting texture with id [{0}] - Cached!", newId);
-			return newId
+			return newId;
 		}
 #endif
 		string fixedUrl = "http://idecan1.grafcan.com/ServicioWMS/OrtoExpress?SERVICE=WMS&LAYERS=ortoexpress&REQUEST=GetMap&VERSION=1.1.0&FORMAT=image/jpeg&SRS=EPSG:32628&WIDTH=128&HEIGHT=128&REFERER=CAPAWARE";
@@ -57,18 +60,20 @@ public class MapTexturesManager : OnlineResourcesManager
 			jpgTextureData = requests_[id].texture.EncodeToJPG();
 			File.WriteAllBytes( FilePath( id ), jpgTextureData );
 		}
-
+		
 		// If the request hasn't finished, the file won't exist
 		// yet.
 		if( !File.Exists ( FilePath( id ) ) ){
 			return null;
 		}
-
+		
 		if( jpgTextureData == null ){
 			jpgTextureData = File.ReadAllBytes( FilePath( id ) );
 		}
-
-		return new Texture2D( jpgTextureData );
+		
+		Texture2D texture = new Texture2D( 2, 2 );
+		texture.LoadImage( jpgTextureData );
+		return texture;
 #else
 		if ( requests_.ContainsKey(id) && requests_ [id].isDone ){
 			return requests_ [id].texture;

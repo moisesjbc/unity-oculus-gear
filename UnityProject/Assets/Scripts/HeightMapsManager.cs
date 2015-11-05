@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//#define CACHE_RESOURCES
+// Uncomment previous line to activate resources caching.
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
