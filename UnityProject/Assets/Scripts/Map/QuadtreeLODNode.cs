@@ -19,7 +19,6 @@ public class QuadtreeLODNode {
 	private int depth_ = 0;
 	const int MAX_DEPTH = 7;
 
-	string textureRequestId;
 	bool textureLoaded = false;
 
 	bool heightMapLoaded = false;
@@ -70,7 +69,7 @@ public class QuadtreeLODNode {
 		this.mapTexturesManager = mapTexturesManager;
 		this.heightMapsManager = heightMapsManager;
 
-		textureRequestId = this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
+		this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_, SetMapTexture );
 		this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_, SetHeightsMap );
 	}
 
@@ -121,7 +120,7 @@ public class QuadtreeLODNode {
 		this.mapTexturesManager = parent.mapTexturesManager;
 		this.heightMapsManager = parent.heightMapsManager;
 
-		textureRequestId = this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
+		this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_, SetMapTexture );
 		this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2, SetHeightsMap );
 	}
 
@@ -193,16 +192,16 @@ public class QuadtreeLODNode {
 				children_ [i].Update ( existsVisibleAncestor | visible_ );
 			}
 		}
-
-		if (!textureLoaded) {
-			Texture2D texture = mapTexturesManager.GetTexture (textureRequestId);
-			if (texture != null) {
-				textureLoaded = true;
-				material_.mainTexture = texture;
-				material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
-			}
-		}
 	}
+
+
+	private void SetMapTexture( Texture2D texture )
+	{
+		material_.mainTexture = texture;
+		material_.mainTexture.wrapMode = TextureWrapMode.Clamp;
+		textureLoaded = true;
+	}
+
 
 	enum DistanceTestResult 
 	{
