@@ -28,8 +28,8 @@ public class QuadtreeLODNode {
 	float metersPerUnit = 0.0f;
 
 	static GameObject emptyGameObject = new GameObject();
-	private static HeightMapsManager heightMapsManager = new HeightMapsManager();
-	private static MapTexturesManager mapTexturesManager = new MapTexturesManager();
+	private HeightMapsManager heightMapsManager = null;
+	private MapTexturesManager mapTexturesManager = null;
 
 
 	public QuadtreeLODNode( float meshSize, 
@@ -37,7 +37,9 @@ public class QuadtreeLODNode {
 	                       Vector2 bottomLeftCoordinates,
 	                       Vector2 topLeftCoordinates,
 	                       Transform transform, 
-	                       Material material )
+	                       Material material,
+	                       MapTexturesManager mapTexturesManager,
+	                       HeightMapsManager heightMapsManager )
 	{		
 		gameObject_ = GameObject.Instantiate( emptyGameObject );
 		gameObject_.AddComponent<MeshRenderer>();
@@ -65,13 +67,16 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 		Debug.Log ("metersPerUnit: " + metersPerUnit);
-		
-		textureRequestId = mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
-		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
+
+		this.mapTexturesManager = mapTexturesManager;
+		this.heightMapsManager = heightMapsManager;
+
+		textureRequestId = this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
+		heightMapRequestId = this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_ );
 	}
 
 
-	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates )
+	public QuadtreeLODNode( QuadtreeLODNode parent, Color color, Vector3 localPosition, Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, MapTexturesManager mapTexturesManager, HeightMapsManager heightMapsManager )
 	{
 		gameObject_ = GameObject.Instantiate( emptyGameObject );
 		gameObject_.AddComponent<MeshRenderer>();
@@ -114,8 +119,11 @@ public class QuadtreeLODNode {
 
 		metersPerUnit = (topRightCoordinates_.x - bottomLeftCoordinates_.x) / gameObject_.GetComponent<MeshRenderer> ().bounds.size.x;
 
-		textureRequestId = mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
-		heightMapRequestId = heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
+		this.mapTexturesManager = parent.mapTexturesManager;
+		this.heightMapsManager = parent.heightMapsManager;
+
+		textureRequestId = this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_);
+		heightMapRequestId = this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2 );
 	}
 
 
@@ -283,7 +291,7 @@ public class QuadtreeLODNode {
 		};
 		
 		for( int i=0; i<4; i++ ){
-			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i] ); 
+			children_[i] = new QuadtreeLODNode( this, childrenColors[i], childLocalPosition[i], childrenBottomLeftCoordinates[i], childrenTopLeftCoordinates[i], mapTexturesManager, heightMapsManager ); 
 		}
 	}
 

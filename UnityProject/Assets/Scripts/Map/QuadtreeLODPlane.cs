@@ -7,12 +7,6 @@ public class QuadtreeLODPlane : MonoBehaviour{
 	HeightMapsManager heightMapsManager = null;
 	MapTexturesManager mapTexturesManager = null;
 
-	public void Awake()
-	{
-		heightMapsManager = gameObject.AddComponent<HeightMapsManager> ();
-		mapTexturesManager = gameObject.AddComponent<MapTexturesManager> ();
-	}
-
 
 	public void Reset( Vector2 bottomLeftCoordinates, Vector3 topRightCoordinates )
 	{
@@ -26,12 +20,17 @@ public class QuadtreeLODPlane : MonoBehaviour{
 		}
 
 		float mapSize = Mathf.Max ( meshSize.x, meshSize.z );
-		
+
 		if (rootNode != null) {
 			GameObject[] mapSectors = GameObject.FindGameObjectsWithTag ("MapSector");
 			for( int i=0; i<mapSectors.Length; i++ ){
 				Destroy (mapSectors[i]);
 			}
+		}
+
+		if (mapTexturesManager == null) {
+			heightMapsManager = gameObject.AddComponent<HeightMapsManager> () as HeightMapsManager;
+			mapTexturesManager = gameObject.AddComponent<MapTexturesManager> () as MapTexturesManager;
 		}
 
 		rootNode = new QuadtreeLODNode( 
@@ -40,7 +39,9 @@ public class QuadtreeLODPlane : MonoBehaviour{
 		                               bottomLeftCoordinates,
 		                               topRightCoordinates,
 		                               transform, 
-		                               this.GetComponent<Material>() 
+		                               this.GetComponent<Material>(),
+		                               mapTexturesManager,
+		                               heightMapsManager
 		                               );
 		GetComponent<MeshRenderer> ().enabled = false;
 	}
