@@ -1,81 +1,53 @@
-﻿//#define CACHE_RESOURCES
-// Uncomment previous line to activate resources caching.
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class HeightMapsManager : OnlineResourcesManager
+public class HeightMapsManager : OnlineResourcesManager<float[,]>
 {
-	public delegate void HeightMapCallback( float [,] heights );
-
-	public void RequestHeightMap( 
-	                            Vector2 bottomLeftCoordinates, 
-	                            Vector2 topRightCoordinates,
-	                            int N,
-	                            HeightMapCallback callback ){
-		
-		string newId = GenerateID (bottomLeftCoordinates, topRightCoordinates, N);
-
-#if CACHE_RESOURCES
-		if( ResourceAlreadyRequested( newId ) ){
-			Debug.LogFormat ("Requesting heights map: {0} - CACHED", newId);
-			if( File.Exists ( FilePath ( newId ) ) ){
-				callback( ParseHeightMatrix( File.ReadAllText( FilePath ( newId ) ) ) );
-			}else{
-				StartCoroutine( WaitForRequestedHeightMap( newId, callback ) );
-			}
-			return;
-		}
-#endif
-		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
-		string bboxUrlQuery = 
-		"&BBOX=" + bottomLeftCoordinates.x + "," +
-			bottomLeftCoordinates.y + "," +
-			topRightCoordinates.x + "," +
-			topRightCoordinates.y;
-		string dimensionsUrlQuery =
-		"&WIDTH=" + N +
-			"&HEIGHT=" + N;
-		
-		string url = fixedUrl + bboxUrlQuery + dimensionsUrlQuery;
-	
-		Debug.Log ("heightMap URL - " + url);
-
-		StartCoroutine (RequestURL (newId, url, callback));
-	}
-
-
-	private IEnumerator RequestURL( string id, string url, HeightMapCallback callback )
-	{
-#if CACHE_RESOURCES
-		requests_[id] = new WWW (url);
-		
-		yield return requests_[id];
-
-		File.WriteAllText ( FilePath( id ), requests_[id].text );
-		
-		callback( ParseHeightMatrix( requests_[id].text ) );
-#else
-		WWW www = new WWW (url);
-		
-		yield return www;
-		
-		callback ( ParseHeightMatrix ( www.text ) );
-#endif
-	}
-
-
-	protected string GenerateID( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int N )
+	protected override string GenerateID( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int N )
 	{
 		return 
 			"heightmap-" + 
-			bottomLeftCoordinates.x + "-" + 
-			bottomLeftCoordinates.y + "-" +
-			topRightCoordinates.x + "-" + 
-			topRightCoordinates.y + "-" +
-			N;
+				bottomLeftCoordinates.x + "-" + 
+				bottomLeftCoordinates.y + "-" +
+				topRightCoordinates.x + "-" + 
+				topRightCoordinates.y + "-" +
+				N;
+	}
+
+
+	protected override string GenerateURL( Vector2 bottomLeftCoordinates, Vector2 topRightCoordinates, int resolution )
+	{
+		string fixedUrl = "http://www.idee.es/wcs/IDEE-WCS-UTM28N/wcsServlet?REQUEST=GetCoverage&SERVICE=WCS&VERSION=1.0.0&FORMAT=AsciiGrid&COVERAGE=MDT_canarias&CRS=EPSG:25828&REFERER=CAPAWARE";
+		string bboxUrlQuery = 
+			"&BBOX=" + bottomLeftCoordinates.x + "," +
+				bottomLeftCoordinates.y + "," +
+				topRightCoordinates.x + "," +
+				topRightCoordinates.y;
+		string dimensionsUrlQuery =
+			"&WIDTH=" + resolution +
+				"&HEIGHT=" + resolution;
+		
+		return fixedUrl + bboxUrlQuery + dimensionsUrlQuery;
+	}
+
+
+	protected override float[,] RetrieveResourceFromWWW( WWW www )
+	{
+		return ParseHeightMatrix (www.text);
+	}
+
+
+	protected override float [,] RetrieveResourceFromFile( string resourceID )
+	{
+		return ParseHeightMatrix ( File.ReadAllText ( FilePath ( resourceID ) ) );
+	}
+
+
+	protected override void WriteWWWToFile( string resourceID, WWW www )
+	{
+		File.WriteAllText (FilePath (resourceID), www.text);
 	}
 
 
@@ -99,12 +71,4 @@ public class HeightMapsManager : OnlineResourcesManager
 		return heightsMatrix;
 	}
 
-
-#if CACHE_RESOURCES
-	private IEnumerator WaitForRequestedHeightMap( string id, HeightMapCallback callback )
-	{
-		yield return requests_[id];
-		callback ( ParseHeightMatrix( requests_[id].text ) );
-	}
-#endif
 }

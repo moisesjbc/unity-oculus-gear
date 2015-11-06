@@ -69,8 +69,8 @@ public class QuadtreeLODNode {
 		this.mapTexturesManager = mapTexturesManager;
 		this.heightMapsManager = heightMapsManager;
 
-		this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_, SetMapTexture );
-		this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_, SetHeightsMap );
+		this.mapTexturesManager.RequestResource (bottomLeftCoordinates_, topRightCoordinates_, 128, SetMapTexture );
+		this.heightMapsManager.RequestResource ( bottomLeftCoordinates_, topRightCoordinates_, meshVertexResolution_, SetHeightsMap );
 	}
 
 
@@ -120,8 +120,8 @@ public class QuadtreeLODNode {
 		this.mapTexturesManager = parent.mapTexturesManager;
 		this.heightMapsManager = parent.heightMapsManager;
 
-		this.mapTexturesManager.RequestTexture (bottomLeftCoordinates_, topRightCoordinates_, SetMapTexture );
-		this.heightMapsManager.RequestHeightMap ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2, SetHeightsMap );
+		this.mapTexturesManager.RequestResource (bottomLeftCoordinates_, topRightCoordinates_, 128, SetMapTexture );
+		this.heightMapsManager.RequestResource ( bottomLeftCoordinates_ - mapSizeVector, topRightCoordinates_ + mapSizeVector, meshVertexResolution_ + (meshVertexResolution_ - 1) * 2, SetHeightsMap );
 	}
 
 
