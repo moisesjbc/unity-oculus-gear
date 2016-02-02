@@ -2,6 +2,8 @@
 
 ## About
 
+![Screenshot of the project preview in Unity editor](screenshot_unity_oculus_gear.jpg)
+
 This is a toy project for testing [Unity 3d](https://unity3d.com) development for [Samsung Gear VR](https://www.oculus.com/en-us/gear-vr/).
 
 ## Instructions
@@ -13,5 +15,5 @@ This is a toy project for testing [Unity 3d](https://unity3d.com) development fo
 3. Generate an Oculus Signature file (osig) for your mobile following the instructions on [this link](https://developer.oculus.com/osig/).
 4. Open *REPO_DIR*/UnityProject with Unity 3D.
 5. Plug your Samsung to the computer.
-6. On Unity, set Android as the target platform.
+6. On Unity, open the scene in *Assets/Scenes/SampleScene.unity* and set Android as the target platform.
 7. Build the Unity project and enjoy!.
